@@ -1,0 +1,5 @@
+Rotary positional embeddings encode relative positions by rotating query and key vectors.
+The quick brown fox jumps over the lazy dog while the language model predicts the next token.
+This small corpus exists only to verify that preprocessing, batching, forward propagation, and checkpoint saving work.
+For real pretraining, replace this directory with OpenWebText-style JSONL or text shards containing billions of tokens.
+

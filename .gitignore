@@ -1,0 +1,10 @@
+__pycache__/
+.venv/
+data/
+out/
+.smoke_data/
+.smoke_out/
+.hf_smoke_data/
+.hf_smoke_out/
+.rope124m_smoke_out/
+*.pyc

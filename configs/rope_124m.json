@@ -1,0 +1,36 @@
+{
+  "model": {
+    "vocab_size": 50257,
+    "block_size": 1024,
+    "n_layer": 12,
+    "n_head": 12,
+    "n_embd": 768,
+    "dropout": 0.0,
+    "bias": false,
+    "rope_base": 10000.0,
+    "rms_norm_eps": 1e-5,
+    "tie_embeddings": true
+  },
+  "training": {
+    "global_batch_size": 64,
+    "micro_batch_size": 4,
+    "max_iters": 100000,
+    "learning_rate": 0.0006,
+    "min_learning_rate": 0.00006,
+    "warmup_iters": 1000,
+    "decay_iters": 100000,
+    "weight_decay": 0.01,
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "grad_clip": 1.0,
+    "eval_interval": 500,
+    "eval_iters": 50,
+    "log_interval": 10,
+    "checkpoint_interval": 1000,
+    "dtype": "auto",
+    "compile": false,
+    "tensorboard": true,
+    "save_checkpoints": true,
+    "seed": 1337
+  }
+}

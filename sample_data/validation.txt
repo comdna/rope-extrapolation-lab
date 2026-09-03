@@ -1,0 +1,2 @@
+Validation text checks that the evaluation loop can draw held-out token sequences and compute loss.
+The smoke pipeline intentionally uses a short context and a tiny model override to finish quickly.

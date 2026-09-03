@@ -1,0 +1,6 @@
+numpy>=1.26
+tiktoken>=0.8
+tqdm>=4.66
+datasets>=4.0
+tensorboard>=2.18
+socksio>=1.0
