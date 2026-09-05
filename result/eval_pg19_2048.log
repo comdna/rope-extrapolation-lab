@@ -1,0 +1,21 @@
+Checkpoint: C:\Users\FeiC\Desktop\workspace\Decoupling\rope_124m\best.pt
+Checkpoint iteration: 12500
+Data directory: C:\Users\FeiC\Desktop\workspace\Decoupling\code\data\pg19_2048
+Books: 10
+Device: cuda
+Dtype: torch.bfloat16
+Context length: 2,048
+Chunks to evaluate: 545
+Progress 1/545: book=2544, chunk=0, loss=5.465793, ppl=236.4632
+Progress 100/545: book=3247, chunk=47, loss=5.627854, ppl=278.0648
+Progress 200/545: book=3608, chunk=33, loss=4.863853, ppl=129.5222
+Progress 300/545: book=3608, chunk=133, loss=4.892045, ppl=133.2257
+Progress 400/545: book=3754, chunk=57, loss=5.553417, ppl=258.1181
+Progress 500/545: book=4128, chunk=1, loss=5.374790, ppl=215.8945
+Overall: loss=5.060792, ppl=157.7154
+Positions 1-1024: loss=5.013234, ppl=150.3903
+Positions 1025-2048: loss=5.108350, ppl=165.3972
+Peak CUDA memory: 1.010 GiB
+Summary saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx2048_best_summary.json
+Chunk metrics saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx2048_best_chunks.csv
+Book metrics saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx2048_best_books.csv

@@ -21,6 +21,8 @@ class ModelConfig:
     dropout: float = 0.0
     bias: bool = False
     rope_base: float = 10000.0
+    rope_scaling_type: str = "none"
+    rope_training_context: int = 1024
     rms_norm_eps: float = 1e-5
     tie_embeddings: bool = True
 
@@ -31,6 +33,10 @@ class ModelConfig:
             raise ValueError("RoPE requires an even attention head dimension")
         if self.block_size <= 0 or self.vocab_size <= 0:
             raise ValueError("block_size and vocab_size must be positive")
+        if self.rope_scaling_type not in {"none", "layerwise"}:
+            raise ValueError("rope_scaling_type must be 'none' or 'layerwise'")
+        if self.rope_training_context <= 0:
+            raise ValueError("rope_training_context must be positive")
 
 
 class RMSNorm(nn.Module):
@@ -45,12 +51,31 @@ class RMSNorm(nn.Module):
 
 
 class RotaryEmbedding(nn.Module):
-    def __init__(self, head_dim: int, base: float) -> None:
+    def __init__(
+        self,
+        head_dim: int,
+        base: float,
+        layer_index: int,
+        layer_count: int,
+        scaling_type: str,
+        training_context: int,
+    ) -> None:
         super().__init__()
         inverse_frequency = 1.0 / (
             base ** (torch.arange(0, head_dim, 2, dtype=torch.float32) / head_dim)
         )
         self.register_buffer("inverse_frequency", inverse_frequency, persistent=False)
+        self.layer_index = layer_index
+        self.layer_count = layer_count
+        self.scaling_type = scaling_type
+        self.training_context = training_context
+
+    def scale_for_length(self, sequence_length: int) -> float:
+        if self.scaling_type == "none" or sequence_length <= self.training_context:
+            return 1.0
+        depth = self.layer_index / max(self.layer_count - 1, 1)
+        length_ratio = sequence_length / self.training_context
+        return length_ratio**depth
 
     def forward(
         self,
@@ -58,7 +83,8 @@ class RotaryEmbedding(nn.Module):
         key: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         sequence_length = query.size(-2)
-        positions = torch.arange(sequence_length, device=query.device, dtype=torch.float32)
+        scale = self.scale_for_length(sequence_length)
+        positions = torch.arange(sequence_length, device=query.device, dtype=torch.float32) / scale
         inverse_frequency = self.get_buffer("inverse_frequency")
         angles = torch.outer(positions, inverse_frequency.float())
         cosine = angles.cos().to(dtype=query.dtype)[None, None, :, :]
@@ -77,7 +103,7 @@ class RotaryEmbedding(nn.Module):
 
 
 class CausalSelfAttention(nn.Module):
-    def __init__(self, config: ModelConfig) -> None:
+    def __init__(self, config: ModelConfig, layer_index: int) -> None:
         super().__init__()
         self.n_head = config.n_head
         self.head_dim = config.n_embd // config.n_head
@@ -88,7 +114,14 @@ class CausalSelfAttention(nn.Module):
             bias=config.bias,
         )
         self.output_projection = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
-        self.rotary = RotaryEmbedding(self.head_dim, config.rope_base)
+        self.rotary = RotaryEmbedding(
+            head_dim=self.head_dim,
+            base=config.rope_base,
+            layer_index=layer_index,
+            layer_count=config.n_layer,
+            scaling_type=config.rope_scaling_type,
+            training_context=config.rope_training_context,
+        )
         self.residual_dropout = nn.Dropout(config.dropout)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
@@ -128,10 +161,10 @@ class MLP(nn.Module):
 
 
 class TransformerBlock(nn.Module):
-    def __init__(self, config: ModelConfig) -> None:
+    def __init__(self, config: ModelConfig, layer_index: int) -> None:
         super().__init__()
         self.attention_norm = RMSNorm(config.n_embd, config.rms_norm_eps)
-        self.attention = CausalSelfAttention(config)
+        self.attention = CausalSelfAttention(config, layer_index)
         self.mlp_norm = RMSNorm(config.n_embd, config.rms_norm_eps)
         self.mlp = MLP(config)
 
@@ -149,7 +182,8 @@ class RoPETransformer(nn.Module):
         self.token_embedding = nn.Embedding(config.vocab_size, config.n_embd)
         self.embedding_dropout = nn.Dropout(config.dropout)
         self.blocks = nn.ModuleList(
-            TransformerBlock(config) for _ in range(config.n_layer)
+            TransformerBlock(config, layer_index)
+            for layer_index in range(config.n_layer)
         )
         self.final_norm = RMSNorm(config.n_embd, config.rms_norm_eps)
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)

@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-09-05T04:46:25.899668+00:00",
+  "checkpoint": "C:\\Users\\FeiC\\Desktop\\workspace\\Decoupling\\rope_124m\\best.pt",
+  "checkpoint_iteration": 12500,
+  "data_directory": "C:\\Users\\FeiC\\Desktop\\workspace\\Decoupling\\code\\data\\pg19_8192",
+  "book_id": null,
+  "context_length": 8192,
+  "training_context": 1024,
+  "book_count": 10,
+  "evaluated_book_count": 10,
+  "skipped_book_count": 0,
+  "evaluated_chunks": 133,
+  "evaluated_tokens": 1089536,
+  "device": "cuda",
+  "dtype": "torch.bfloat16",
+  "overall": {
+    "loss": 5.880820826480263,
+    "perplexity": 358.10306158039856
+  },
+  "in_distribution": {
+    "start_position": 1,
+    "end_position": 1024,
+    "tokens": 136192,
+    "loss": 5.006942118020882,
+    "perplexity": 149.4470452967387
+  },
+  "extrapolated": {
+    "start_position": 1025,
+    "end_position": 8192,
+    "tokens": 953344,
+    "loss": 6.0056606214873645,
+    "perplexity": 405.7189268637302
+  },
+  "peak_cuda_memory_gb": 3.312633514404297
+}

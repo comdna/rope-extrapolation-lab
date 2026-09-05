@@ -1,0 +1,54 @@
+[
+  {
+    "context_length": 1024,
+    "baseline_overall_ppl": 149.0133183836135,
+    "layerwise_overall_ppl": 149.0133183836135,
+    "overall_change_percent": 0.0,
+    "baseline_first_1024_ppl": 149.0133183836135,
+    "layerwise_first_1024_ppl": 149.0133183836135,
+    "first_1024_change_percent": 0.0,
+    "baseline_extrapolated_ppl": null,
+    "layerwise_extrapolated_ppl": null,
+    "extrapolated_change_percent": null,
+    "peak_cuda_memory_gb": 0.6270256042480469
+  },
+  {
+    "context_length": 2048,
+    "baseline_overall_ppl": 157.7153626735253,
+    "layerwise_overall_ppl": 164.33812458667583,
+    "overall_change_percent": 4.199186306827829,
+    "baseline_first_1024_ppl": 150.3903300947002,
+    "layerwise_first_1024_ppl": 171.77136597419008,
+    "first_1024_change_percent": 14.217028359487148,
+    "baseline_extrapolated_ppl": 165.39716934269126,
+    "layerwise_extrapolated_ppl": 157.22655118467384,
+    "extrapolated_change_percent": -4.939998786247957,
+    "peak_cuda_memory_gb": 1.0104789733886719
+  },
+  {
+    "context_length": 4096,
+    "baseline_overall_ppl": 241.16028785592746,
+    "layerwise_overall_ppl": 243.80824348572133,
+    "overall_change_percent": 1.0980064973947101,
+    "baseline_first_1024_ppl": 151.15650055668127,
+    "layerwise_first_1024_ppl": 224.21353386319043,
+    "first_1024_change_percent": 48.3320485969533,
+    "baseline_extrapolated_ppl": 281.7942401525276,
+    "layerwise_extrapolated_ppl": 250.71321033247276,
+    "extrapolated_change_percent": -11.029689536319665,
+    "peak_cuda_memory_gb": 1.7781028747558594
+  },
+  {
+    "context_length": 8192,
+    "baseline_overall_ppl": 358.10306158039856,
+    "layerwise_overall_ppl": 346.51488440282975,
+    "overall_change_percent": -3.2359894178025983,
+    "baseline_first_1024_ppl": 149.4470452967387,
+    "layerwise_first_1024_ppl": 299.20273730214325,
+    "first_1024_change_percent": 100.20652580186713,
+    "baseline_extrapolated_ppl": 405.7189268637302,
+    "layerwise_extrapolated_ppl": 353.858763764999,
+    "extrapolated_change_percent": -12.782288344203764,
+    "peak_cuda_memory_gb": 3.312633514404297
+  }
+]

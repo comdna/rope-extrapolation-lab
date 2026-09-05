@@ -1,0 +1,20 @@
+[1/10] 2544.txt: tokens=88,982, chunks=10, dropped=7,052
+[2/10] 3129.txt: tokens=20,294, chunks=2, dropped=3,908
+[3/10] 3247.txt: tokens=135,809, chunks=16, dropped=4,721
+[4/10] 3340.txt: tokens=99,354, chunks=12, dropped=1,038
+[5/10] 3608.txt: tokens=360,972, chunks=44, dropped=480
+[6/10] 3754.txt: tokens=124,661, chunks=15, dropped=1,766
+[7/10] 3890.txt: tokens=39,833, chunks=4, dropped=7,061
+[8/10] 4047.txt: tokens=158,441, chunks=19, dropped=2,774
+[9/10] 4128.txt: tokens=25,866, chunks=3, dropped=1,287
+[10/10] 860.txt: tokens=72,106, chunks=8, dropped=6,562
+--- Dataset summary ---
+Source: C:\Users\FeiC\Desktop\workspace\Decoupling\code\data\pg19
+Output: C:\Users\FeiC\Desktop\workspace\Decoupling\code\data\pg19_8192
+Books: 10
+Books with chunks: 10
+Source tokens: 1,126,318
+Context length: 8,192
+Full chunks: 133
+Written tokens: 1,089,669
+Dropped tail tokens: 36,649

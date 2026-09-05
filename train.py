@@ -8,7 +8,7 @@ import time
 from contextlib import nullcontext
 from dataclasses import dataclass, fields
 from pathlib import Path
-from typing import cast
+from typing import Protocol, cast
 
 import torch
 import torch.distributed as dist
@@ -17,6 +17,7 @@ from torch.nn.parallel import DistributedDataParallel
 from data import BinaryTokenDataset, prepare_dataset, prepare_hf_dataset
 from metrics import MetricsLogger, perplexity
 from model import ModelConfig, RoPETransformer
+from online_data import HFOnlineBatchProvider, prepare_online_validation
 
 
 @dataclass
@@ -53,6 +54,20 @@ class DistributedContext:
     device: torch.device
 
 
+class BatchProvider(Protocol):
+    metadata: dict[str, object]
+
+    def get_batch(
+        self,
+        split: str,
+        batch_size: int,
+        device: torch.device,
+        generator: torch.Generator,
+    ) -> tuple[torch.Tensor, torch.Tensor]: ...
+
+    def close(self) -> None: ...
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Pretrain a 124M RoPE Transformer")
     parser.add_argument("--config", default="configs/rope_124m.json")
@@ -63,6 +78,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--hf-text-field", default="text")
     parser.add_argument("--hf-cache-dir", default=None)
     parser.add_argument("--hf-streaming", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--hf-online", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--online-validation-tokens", type=int, default=4_000_000)
+    parser.add_argument("--hf-shuffle-buffer", type=int, default=10_000)
+    parser.add_argument("--tokenizer-batch-documents", type=int, default=64)
     parser.add_argument("--hf-token-env", default="HF_TOKEN")
     parser.add_argument("--max-documents", type=int, default=None)
     parser.add_argument("--data-dir", default="data/openwebtext")
@@ -170,17 +189,18 @@ def reduce_mean(value: torch.Tensor, context: DistributedContext) -> torch.Tenso
 @torch.no_grad()
 def estimate_loss(
     model: torch.nn.Module,
-    dataset: BinaryTokenDataset,
+    dataset: BatchProvider,
     micro_batch_size: int,
     eval_iters: int,
     device: torch.device,
     amp_dtype: torch.dtype | None,
     generator: torch.Generator,
     context: DistributedContext,
+    splits: tuple[str, ...] = ("train", "val"),
 ) -> dict[str, float]:
     model.eval()
     results: dict[str, float] = {}
-    for split in ("train", "val"):
+    for split in splits:
         losses = torch.zeros(eval_iters, device=device)
         for index in range(eval_iters):
             inputs, targets = dataset.get_batch(split, micro_batch_size, device, generator)
@@ -252,46 +272,95 @@ def main() -> None:
     torch.set_float32_matmul_precision("high")
 
     data_directory = Path(args.data_dir)
-    required_data_files = [data_directory / "train.bin", data_directory / "val.bin", data_directory / "meta.json"]
-    if not all(path.exists() for path in required_data_files):
-        if args.input_dir is not None and args.hf_dataset is not None:
-            raise ValueError("Use either --input-dir or --hf-dataset, not both")
-        if args.input_dir is None and args.hf_dataset is None:
-            raise FileNotFoundError(
-                "Prepared dataset is missing. Supply --input-dir or --hf-dataset."
-            )
-        if context.master:
-            if args.hf_dataset is not None:
-                metadata = prepare_hf_dataset(
+    hf_token = os.environ.get(args.hf_token_env)
+    if args.hf_online:
+        if args.hf_dataset is None:
+            raise ValueError("--hf-online requires --hf-dataset")
+        if args.input_dir is not None:
+            raise ValueError("--hf-online cannot be combined with --input-dir")
+        required_online_files = [
+            data_directory / "online_val.bin",
+            data_directory / "online_meta.json",
+        ]
+        if not all(path.exists() for path in required_online_files):
+            if context.master:
+                metadata = prepare_online_validation(
                     dataset_name=args.hf_dataset,
                     dataset_config=args.hf_config,
                     dataset_split=args.hf_split,
                     text_field=args.hf_text_field,
                     output_directory=data_directory,
-                    validation_fraction=args.validation_fraction,
-                    seed=training_config.seed,
-                    streaming=args.hf_streaming,
+                    target_tokens=args.online_validation_tokens,
+                    block_size=model_config.block_size,
+                    shuffle_seed=training_config.seed,
+                    shuffle_buffer_size=args.hf_shuffle_buffer,
+                    tokenizer_batch_documents=args.tokenizer_batch_documents,
                     cache_directory=args.hf_cache_dir,
-                    token=os.environ.get(args.hf_token_env),
-                    max_documents=args.max_documents,
+                    token=hf_token,
                 )
-            else:
-                assert args.input_dir is not None
-                metadata = prepare_dataset(
-                    args.input_dir,
-                    data_directory,
-                    validation_fraction=args.validation_fraction,
-                    seed=training_config.seed,
-                    json_text_field=args.json_text_field,
+                print(
+                    "Prepared online validation cache: "
+                    f"val={metadata.validation_tokens:,} tokens from "
+                    f"{metadata.validation_documents:,} documents"
                 )
-            print(
-                f"Prepared dataset: train={metadata.train_tokens:,}, "
-                f"val={metadata.val_tokens:,} tokens"
-            )
-        if context.enabled:
-            dist.barrier()
-
-    dataset = BinaryTokenDataset(data_directory, model_config.block_size)
+            if context.enabled:
+                dist.barrier()
+        dataset: BatchProvider = HFOnlineBatchProvider(
+            data_directory=data_directory,
+            block_size=model_config.block_size,
+            batch_size=training_config.micro_batch_size,
+            rank=context.rank,
+            world_size=context.world_size,
+            cache_directory=args.hf_cache_dir,
+            token=hf_token,
+            tokenizer_batch_documents=args.tokenizer_batch_documents,
+        )
+        if context.master:
+            print("HF online mode enabled: training tokens are streamed and tokenized on demand")
+    else:
+        required_data_files = [
+            data_directory / "train.bin",
+            data_directory / "val.bin",
+            data_directory / "meta.json",
+        ]
+        if not all(path.exists() for path in required_data_files):
+            if args.input_dir is not None and args.hf_dataset is not None:
+                raise ValueError("Use either --input-dir or --hf-dataset, not both")
+            if args.input_dir is None and args.hf_dataset is None:
+                raise FileNotFoundError(
+                    "Prepared dataset is missing. Supply --input-dir or --hf-dataset."
+                )
+            if context.master:
+                if args.hf_dataset is not None:
+                    metadata = prepare_hf_dataset(
+                        dataset_name=args.hf_dataset,
+                        dataset_config=args.hf_config,
+                        dataset_split=args.hf_split,
+                        text_field=args.hf_text_field,
+                        output_directory=data_directory,
+                        validation_fraction=args.validation_fraction,
+                        seed=training_config.seed,
+                        streaming=args.hf_streaming,
+                        cache_directory=args.hf_cache_dir,
+                        token=hf_token,
+                        max_documents=args.max_documents,
+                    )
+                else:
+                    assert args.input_dir is not None
+                    metadata = prepare_dataset(
+                        args.input_dir,
+                        data_directory,
+                        validation_fraction=args.validation_fraction,
+                        seed=training_config.seed,
+                        json_text_field=args.json_text_field,
+                    )
+                print(
+                    f"Prepared dataset: train={metadata.train_tokens:,}, "
+                    f"val={metadata.val_tokens:,} tokens"
+                )
+            if context.enabled:
+                dist.barrier()
+        dataset = BinaryTokenDataset(data_directory, model_config.block_size)
     if int(dataset.metadata["vocab_size"]) != model_config.vocab_size:
         raise ValueError(
             f"Dataset vocabulary {dataset.metadata['vocab_size']} does not match "
@@ -452,25 +521,32 @@ def main() -> None:
                 amp_dtype,
                 random_generator,
                 context,
+                splits=("val",) if args.hf_online else ("train", "val"),
             )
             if context.master:
                 assert metrics_logger is not None
-                train_eval_perplexity = perplexity(losses["train"])
                 validation_perplexity = perplexity(losses["val"])
-                print(
-                    f"eval {iteration:06d} | train {losses['train']:.4f} | "
-                    f"train ppl {train_eval_perplexity:.2f} | "
-                    f"val {losses['val']:.4f} | val ppl {validation_perplexity:.2f}"
-                )
-                metrics_logger.log(
-                    iteration,
-                    "train_eval",
-                    loss=losses["train"],
-                    perplexity=train_eval_perplexity,
-                    learning_rate=learning_rate,
-                    tokens_seen=(iteration + 1) * training_config.global_batch_size * model_config.block_size,
-                    elapsed_seconds=time.perf_counter() - run_start_time,
-                )
+                if "train" in losses:
+                    train_eval_perplexity = perplexity(losses["train"])
+                    print(
+                        f"eval {iteration:06d} | train {losses['train']:.4f} | "
+                        f"train ppl {train_eval_perplexity:.2f} | "
+                        f"val {losses['val']:.4f} | val ppl {validation_perplexity:.2f}"
+                    )
+                    metrics_logger.log(
+                        iteration,
+                        "train_eval",
+                        loss=losses["train"],
+                        perplexity=train_eval_perplexity,
+                        learning_rate=learning_rate,
+                        tokens_seen=(iteration + 1) * training_config.global_batch_size * model_config.block_size,
+                        elapsed_seconds=time.perf_counter() - run_start_time,
+                    )
+                else:
+                    print(
+                        f"eval {iteration:06d} | val {losses['val']:.4f} | "
+                        f"val ppl {validation_perplexity:.2f}"
+                    )
                 metrics_logger.log(
                     iteration,
                     "validation",

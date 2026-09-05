@@ -1,0 +1,27 @@
+Checkpoint: C:\Users\FeiC\Desktop\workspace\Decoupling\rope_124m\best.pt
+Checkpoint iteration: 12500
+Data directory: C:\Users\FeiC\Desktop\workspace\Decoupling\code\data\pg19_1024
+Books: 10
+Device: cuda
+Dtype: torch.bfloat16
+Context length: 1,024
+RoPE scaling: layerwise
+Layer scales: 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000
+Chunks to evaluate: 1,093
+Progress 1/1093: book=2544, chunk=0, loss=5.213138, ppl=183.6694
+Progress 100/1093: book=3129, chunk=13, loss=6.146311, ppl=466.9914
+Progress 200/1093: book=3247, chunk=94, loss=5.694752, ppl=297.3030
+Progress 300/1093: book=3340, chunk=62, loss=4.839017, ppl=126.3451
+Progress 400/1093: book=3608, chunk=66, loss=4.822100, ppl=124.2257
+Progress 500/1093: book=3608, chunk=166, loss=5.033916, ppl=153.5331
+Progress 600/1093: book=3608, chunk=266, loss=4.871897, ppl=130.5683
+Progress 700/1093: book=3754, chunk=14, loss=5.423313, ppl=226.6287
+Progress 800/1093: book=3754, chunk=114, loss=5.563346, ppl=260.6936
+Progress 900/1093: book=4047, chunk=55, loss=5.264481, ppl=193.3459
+Progress 1000/1093: book=4128, chunk=1, loss=5.502274, ppl=245.2490
+Overall: loss=5.004036, ppl=149.0133
+Positions 1-1024: loss=5.004036, ppl=149.0133
+Peak CUDA memory: 0.627 GiB
+Summary saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx1024_best_layerwise_summary.json
+Chunk metrics saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx1024_best_layerwise_chunks.csv
+Book metrics saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx1024_best_layerwise_books.csv

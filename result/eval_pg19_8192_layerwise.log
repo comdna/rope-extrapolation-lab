@@ -1,0 +1,19 @@
+Checkpoint: C:\Users\FeiC\Desktop\workspace\Decoupling\rope_124m\best.pt
+Checkpoint iteration: 12500
+Data directory: C:\Users\FeiC\Desktop\workspace\Decoupling\code\data\pg19_8192
+Books: 10
+Device: cuda
+Dtype: torch.bfloat16
+Context length: 8,192
+RoPE scaling: layerwise
+Layer scales: 1.0000, 1.2081, 1.4595, 1.7632, 2.1301, 2.5733, 3.1088, 3.7557, 4.5373, 5.4814, 6.6220, 8.0000
+Chunks to evaluate: 133
+Progress 1/133: book=2544, chunk=0, loss=6.102855, ppl=447.1326
+Progress 100/133: book=3890, chunk=0, loss=6.047512, ppl=423.0592
+Overall: loss=5.847926, ppl=346.5149
+Positions 1-1024: loss=5.701121, ppl=299.2027
+Positions 1025-8192: loss=5.868898, ppl=353.8588
+Peak CUDA memory: 3.313 GiB
+Summary saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx8192_best_layerwise_summary.json
+Chunk metrics saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx8192_best_layerwise_chunks.csv
+Book metrics saved to: C:\Users\FeiC\Desktop\workspace\Decoupling\code\result\pg19_ctx8192_best_layerwise_books.csv

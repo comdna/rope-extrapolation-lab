@@ -1,0 +1,46 @@
+[
+  {
+    "context_length": 1024,
+    "books": 10,
+    "chunks": 1093,
+    "tokens": 1119232,
+    "overall_loss": 5.00403568707577,
+    "overall_perplexity": 149.0133183836135,
+    "in_distribution_perplexity": 149.0133183836135,
+    "extrapolated_perplexity": null,
+    "peak_cuda_memory_gb": 0.6270256042480469
+  },
+  {
+    "context_length": 2048,
+    "books": 10,
+    "chunks": 545,
+    "tokens": 1116160,
+    "overall_loss": 5.060791906304316,
+    "overall_perplexity": 157.7153626735253,
+    "in_distribution_perplexity": 150.3903300947002,
+    "extrapolated_perplexity": 165.39716934269126,
+    "peak_cuda_memory_gb": 1.0104789733886719
+  },
+  {
+    "context_length": 4096,
+    "books": 10,
+    "chunks": 270,
+    "tokens": 1105920,
+    "overall_loss": 5.485461807250976,
+    "overall_perplexity": 241.16028785592746,
+    "in_distribution_perplexity": 151.15650055668127,
+    "extrapolated_perplexity": 281.7942401525276,
+    "peak_cuda_memory_gb": 1.7781028747558594
+  },
+  {
+    "context_length": 8192,
+    "books": 10,
+    "chunks": 133,
+    "tokens": 1089536,
+    "overall_loss": 5.880820826480263,
+    "overall_perplexity": 358.10306158039856,
+    "in_distribution_perplexity": 149.4470452967387,
+    "extrapolated_perplexity": 405.7189268637302,
+    "peak_cuda_memory_gb": 3.312633514404297
+  }
+]
