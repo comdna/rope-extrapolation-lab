@@ -1,429 +1,202 @@
-# RoPE 124M Pretraining Pipeline
+# 怎样调整位置编码，使得大模型具有更好的外推能力？
 
-[English](README.md) | **中文**
+[English](README.md) | **中文** | [实验与复现](EXPERIMENTS_CN.md)
 
-这是一个从头训练的 GPT-style decoder-only Transformer，配置与论文中的 124M baseline 对齐：
+## Why Valuable
 
-- 12 Transformer layers
-- hidden size 768
-- 12 attention heads
-- context length 1024
-- GPT-2 tokenizer，vocabulary size 50,257
-- RMSNorm
-- RoPE positional encoding，base 10,000
-- AdamW，global batch size 64
-- OpenWebText 风格自回归预训练
+很多开源模型的技术报告有PE和外推能力的部分
 
-项目不依赖现成 GPT-2 权重。模型随机初始化，只使用 GPT-2 tokenizer。
+大幅降低长上下文模型的训练成本，实现"训短推长"
 
-## 安装
+解锁长文本核心应用场景，直接提升模型实用能力
 
-建议使用 Linux 或 WSL2、Python 3.10+ 和支持 CUDA 的 PyTorch。
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+深化对Transformer位置信息编码机制的理论认知，推动架构演进
 
-`requirements.txt` 不固定 PyTorch 的 CPU/CUDA 构建。请先根据机器安装对应版本，例如 CUDA 13.0：
-
-```powershell
-python -m pip install torch --index-url https://download.pytorch.org/whl/cu130
-python -m pip install -r requirements.txt
-```
+## Intro
 
-Windows PowerShell：
+外推能力：大模型在训练时和预测时的输入长度不一致，导致模型的泛化能力下降的问题。例如，如果一个模型在训练时只使用了512个 token 的文本，那么在预测时如果输入超过512个 token，模型可能无法正确处理。这就限制了大模型在处理长文本或多轮对话等任务时的效果。
 
-```powershell
-py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
-
-## 数据格式
+为什么位置编码会影响llm的外推能力：Transformer架构本身不具备感知token顺序的能力，必须依赖位置编码来注入序列中的位置信息，这使得模型对位置信号产生了根本性的依赖；而模型在预训练时只见过有限长度内的位置编码模式，其注意力权重和特征表示都是针对这一范围内的位置分布学到的，本质上是在一个"有界区间"内拟合。因此，当推理时序列长度超出训练范围，位置编码会生成模型从未见过的数值或向量，陌生的位置信号落入训练分布之外，导致注意力分数异常、输出质量急剧退化。位置编码方案对位置信息的编码方式决定了超出训练长度后信号的"可预测性"，故会影响外推能力。
 
-将原始数据放进任意目录，例如：
+## 应用现状和问题
 
-```text
-raw_openwebtext/
-  shard-00000.jsonl
-  shard-00001.jsonl.gz
-  article-00001.txt
-  article-00002.md
-```
-
-支持：
+RoPE对Transformer 每一层采用相同的 RoPE 缩放规则，没有区分浅层与深层。这种统一处理无法同时满足浅层“精确定位”和深层“弱化位置约束”的不同需求，当上下文长度远超预训练样本的长度时，难以兼顾局部结构建模与全局语义整合，最终导致长上下文检索或推理性能下降。
 
-- `.jsonl` / `.jsonl.gz`：每行一个 JSON object，默认读取 `text` 字段；
-- `.txt` / `.txt.gz`；
-- `.md` / `.md.gz`。
+统一缩放会形成两种相互冲突的因果链：
+1.缩放较强时：对所有层统一压缩 RoPE，造成浅层细粒度相对位置信息变弱；再造成浅层无法正确组合邻近词元、构建局部结构并将长序列锚定到预训练语义空间；最后造成困惑度急剧上升、长文本检索性能崩溃。
+2.缩放较弱时：为了保护浅层而在所有层保留较强位置信号，造成深层仍受到过于僵化的位置约束；再造成位置噪声干扰深层对语义表征的全局整合与组合推理；最后造成模型虽然能够读取长上下文，却无法充分利用这些信息进行长距离推理。
 
-如果存在 `train/` 和 `val/`（或 `validation/`）子目录，则按显式划分处理。否则按 document 随机划分，默认验证集比例为 0.1%。
-
-## 一条命令跑完整 pipeline
-
-```bash
-python train.py \
-  --config configs/rope_124m.json \
-  --input-dir /path/to/raw_openwebtext \
-  --data-dir data/openwebtext \
-  --out-dir out/rope_124m
-```
+## 相关工作：RoPE的一些变体
 
-如果 `data/openwebtext/train.bin` 和 `val.bin` 不存在，`train.py` 会自动完成 GPT-2 tokenization 和二进制数据生成；如果已经存在，则直接开始或恢复训练。
+--YARN：在RoPE上做了两项改动：按频率分段的位置插值和注意力 logits 缩放。前者同时保留短距离位置分辨率与长距离外推能力，后者补偿上下文扩展后注意力分布的变化。
 
-## 直接使用 Hugging Face OpenWebText
+--FoPE：RoPE理论上依靠频率的周期性实现长度外推，但模型中的线性层、非线性激活以及有限训练长度会破坏这种理想频谱结构。为此，FoPE 不再假设每个注意力维度只包含一个频率，而是把每个维度建模为包含主频和若干附加频率的傅里叶级数，同时把未得到充分训练的极低频分量置为零，从而提高注意力周期延拓的鲁棒性和模型的长度泛化能力。
 
-无需手工下载数据文件。下面的命令会流式读取 `Skylion007/openwebtext`，使用 GPT-2 tokenizer 生成本地二进制 token 数据，然后开始训练：
+--AdaRoPE：不同注意力头不应该使用完全相同的RoPE旋转频率和缩放策略。因此，它把标准 RoPE 的全模型统一配置改为按注意力头自适应学习的频率和随上下文长度变化的缩放因子，以提高频率维度利用率。
 
-```powershell
-python train.py `
-  --config configs/rope_124m.json `
-  --hf-dataset Skylion007/openwebtext `
-  --hf-streaming `
-  --data-dir data/openwebtext `
-  --out-dir out/rope_124m
-```
+--PoPE：把注意力中的内容匹配和相对位置匹配显式解耦，内容只决定特征幅值，位置只决定相位，避免内容任意改变一个注意力通道偏好的相对距离。
 
-### 边加载边训练（推荐用于服务器首次训练）
-
-加入 `--hf-online` 后，程序不再等待整个 OpenWebText 转换为 `train.bin`。它只先生成一个固定验证集缓存，然后从 Hugging Face 流中按需下载文档、批量分词、连续拼接为训练序列，并立即送入 GPU：
+## 开源模型的情况
 
-```bash
-export HF_ENDPOINT=https://hf-mirror.com
-export HF_HOME=/root/autodl-tmp/huggingface
-export HF_HUB_DISABLE_XET=1
+qwen3的技术报告[arXiv：2505.09388]中阐述：相较于qwen2.5,引入 YARN ，使推理期间的序列长度容量提升至原来的四倍；在 RULER 基准测试中，对qwen3采用 scaling factor=4 的 YARN ，在非思考模式下，其在长上下文处理任务上的表现优于规模相近的 Qwen2.5 模型。
 
-python train.py \
-  --config configs/rope_124m.json \
-  --hf-dataset Skylion007/openwebtext \
-  --hf-online \
-  --online-validation-tokens 4000000 \
-  --hf-shuffle-buffer 10000 \
-  --tokenizer-batch-documents 64 \
-  --hf-cache-dir /root/autodl-tmp/huggingface \
-  --data-dir /root/autodl-tmp/openwebtext_online \
-  --out-dir /root/autodl-tmp/rope_124m
-```
+kimi3的技术报告[arXiv:2607.24653]中阐述：kimi3采用了混合注意力，采用的其一注意力KDA，需要给每个token表示状态，状态按 token 顺序更新，输出依赖按顺序累积的状态，交换 token 顺序通常会产生不同结果，所以位置顺序被隐含在递归状态中。所以kimi3，没有显式加入位置编码的过程。
 
-在线模式的 `data-dir` 只保存：
+deepseek-v4的技术报告[arXiv:2606.19348]中阐述：deepseek-v4采用的是部分旋转位置编码，具体而言，对于CSA和HCA（模型采用的两种注意力）中使用的每个查询向量和 KV 条目向量，我们只对其最后 64 个维度应用RoPE
 
-```text
-openwebtext_online/
-  online_val.bin
-  online_meta.json
-```
+## 我的思考和疑问
 
-- `online-validation-tokens` 控制固定验证缓存的目标 token 数；实际数量可能略大，因为程序按一批文档写入。
-- `hf-shuffle-buffer` 控制流式近似随机打乱的缓冲区；数值越大，随机性通常越好，但占用更多主机内存并延长首次取样时间。
-- `tokenizer-batch-documents` 控制每次批量分词的文档数。网络较慢时首个训练 step 仍可能等待一个 parquet 分片下载完成。
-- 控制台及 `metrics.jsonl`、`metrics.csv`、TensorBoard 仍会记录 train loss/PPL、validation loss/PPL、吞吐率和 GPU 显存。
-- 在线训练恢复 checkpoint 时会恢复模型、optimizer 和 iteration，但不会精确恢复 Hugging Face 流的位置；数据流会从同一随机顺序开头重新跳过验证文档，部分训练样本可能重复。若要求严格可复现，请继续使用离线 `train.bin` 模式。
+考虑极限情况：如果上来就把context拉的很长，会出现什么现象，如果效果不好，可能的原因是什么？
 
-如需单独完成数据准备：
+[NeurIPS 2021 The Stability-Efficiency Dilemma]: 训练初期模型参数处于随机初始化附近，注意力分布近乎随机。长序列会引发梯度方差的极端值，直接对应训练 loss 的突然飙升，导致 Adam 优化器的二阶矩估计被噪声主导，优化过程本身崩溃。
 
-```powershell
-python prepare_hf_data.py `
-  --dataset Skylion007/openwebtext `
-  --streaming `
-  --output-dir data/openwebtext
-```
+[NeurIPS 2024  "Dataset Decomposition"]自然语言中绝大多数语法和语义关系发生在短距离内（通常 < 50 tokens），如主谓一致、修饰关系、代词指代等。如果训练数据中大量是长序列，模型在训练早期会被迫将大量计算资源花在处理的长距离关系上，而最需要优先学会的短距离模式反而被忽略。使用从短到长的渐进式方式，可以比固定长度基线快6倍达到目标精度，且下游任务性能更好。Meta 在 NAACL 2024 的消融实验也证实，在预训练数据集中拥有大量长文本并不是实现强长上下文性能的关键，少量高质量长文本配合持续预训练即可达到同等效果。
 
-第一次正式运行会遍历并 tokenize 数据集，因此开始训练前的数据准备可能持续较长时间。生成 `train.bin` 和 `val.bin` 后，后续启动会直接复用。
+RoPE的变体在文章中有很好的实验效果，在一些开源模型中也会被使用，但是主流开源模型很少会花大篇幅去介绍为什么使用它（因此怀疑这个切入点是不是有意义？RoPE的各种变体是不是水文？）
 
-快速验证 Hugging Face 下载和字段是否正确：
+## 原始Transformer的位置编码
 
-```powershell
-python prepare_hf_data.py `
-  --dataset Skylion007/openwebtext `
-  --output-dir .hf_smoke_data `
-  --validation-fraction 0.2 `
-  --max-documents 20
-```
-
-## 训练指标
-
-训练期间控制台会输出：
-
-- train loss 和 train PPL；
-- validation loss 和 validation PPL；
-- learning rate；
-- gradient norm；
-- tokens processed 和 tokens/second；
-- GPU allocated、reserved 和 peak memory。
-
-同时写入：
-
-```text
-out/rope_124m/
-  metrics.jsonl
-  metrics.csv
-  tensorboard/
-  best.pt
-  latest.pt
-```
-
-启动 TensorBoard：
-
-```powershell
-tensorboard --logdir out/rope_124m/tensorboard
-```
-
-如不需要 TensorBoard：
-
-```powershell
-python train.py ... --no-tensorboard
-```
-
-## 多 GPU
-
-使用 `torchrun` 启动 DDP：
-
-```bash
-torchrun --standalone --nproc_per_node=4 train.py \
-  --config configs/rope_124m.json \
-  --input-dir /path/to/raw_openwebtext \
-  --data-dir data/openwebtext \
-  --out-dir out/rope_124m
-```
-
-程序根据 GPU 数量和 `micro_batch_size` 自动计算 gradient accumulation，使 global batch size 保持为 64。必须满足：
-
-```text
-global_batch_size % (micro_batch_size * world_size) == 0
-```
-
-## 显存不足
-
-减小配置中的 `micro_batch_size`，例如从 4 改为 2 或 1。global batch size 不变，程序会自动增加 gradient accumulation。
-
-也可以启用 activation checkpointing：
-
-```bash
-python train.py ... --gradient-checkpointing
-```
-
-## 从 checkpoint 恢复
-
-默认会自动读取 `out-dir/latest.pt`。也可以明确指定：
-
-```bash
-python train.py ... --resume out/rope_124m/latest.pt
-```
-
-## 单独准备数据
-
-```bash
-python prepare_data.py \
-  --input-dir /path/to/raw_openwebtext \
-  --output-dir data/openwebtext
-```
-
-输出：
-
-```text
-data/openwebtext/
-  train.bin
-  val.bin
-  meta.json
-```
-
-## 快速测试
-
-快速测试使用小模型和随机 token，在 CPU 或 GPU 上完成前向、反向和 optimizer step：
-
-```bash
-python smoke_test.py
-```
-
-测试真实数据 pipeline：
-
-```bash
-python train.py \
-  --config configs/smoke.json \
-  --input-dir sample_data \
-  --data-dir .smoke_data \
-  --out-dir .smoke_out
-```
-
-`configs/smoke.json` 只用于 pipeline 测试，不是正式训练配置。
-
-## RoPE 在 PG-19 上的长度外推实验
-
-使用 `rope_124m/best.pt` 对 PG-19 test 文本进行长度外推评测。该 checkpoint 对应训练迭代数 12,500，训练时的上下文长度为 1024。
-
-执行实验时，`data/pg19` 中共有 10 个 `.txt` 文件。每本书使用 GPT-2 tokenizer 单独编码，不跨书拼接。对于上下文长度 $L$，每个原始 chunk 包含 $L+1$ 个 token：前 $L$ 个 token 作为输入，后移一位后的 $L$ 个 token 作为 next-token prediction 标签。窗口之间不重叠，不足 $L+1$ token 的书籍尾部被丢弃。
-
-### 数据切分
-
-使用以下命令生成不同长度的数据：
-
-```powershell
-python prepare_pg19_eval.py `
-  --input-dir data\pg19 `
-  --output-dir data\pg19_2048 `
-  --context-length 2048 `
-  --overwrite
-```
-
-将 `2048` 替换为 `1024`、`4096` 或 `8192`，即可生成对应的数据目录。
-
-| 上下文长度 | 书籍数 | 完整 chunks | 写入 token 数 | 丢弃尾部 token 数 |
-| ---: | ---: | ---: | ---: | ---: |
-| 1024 | 10 | 1,093 | 1,120,325 | 5,993 |
-| 2048 | 10 | 545 | 1,116,705 | 9,613 |
-| 4096 | 10 | 270 | 1,106,190 | 20,128 |
-| 8192 | 10 | 133 | 1,089,669 | 36,649 |
-
-### 评测命令
-
-```powershell
-python eval_pg19.py `
-  --checkpoint ..\rope_124m\best.pt `
-  --data-dir data\pg19_2048 `
-  --training-context 1024 `
-  --device auto `
-  --dtype auto `
-  --result-dir result
-```
-
-评测使用 NVIDIA GeForce RTX 5060 Laptop GPU 和 `bfloat16`。结果如下：
-
-| 测试长度 | chunks | 总体 PPL | 位置 1–1024 PPL | 外推位置 PPL | 峰值 CUDA 显存 |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 1024 | 1,093 | 149.01 | 149.01 | — | 0.63 GiB |
-| 2048 | 545 | 157.72 | 150.39 | 165.40 | 1.01 GiB |
-| 4096 | 270 | 241.16 | 151.16 | 281.79 | 1.78 GiB |
-| 8192 | 133 | 358.10 | 149.45 | 405.72 | 3.31 GiB |
-
-其中，“外推位置 PPL”表示位置 1025 至当前测试长度范围内的 token 困惑度。可以看到，前 1024 个位置的 PPL 在不同测试长度下基本稳定，而超出训练上下文后的 PPL 随测试长度显著增加，说明该 RoPE checkpoint 出现了明显的长度外推退化。
-
-### V2：逐层增强 RoPE 缩放
-
-在不修改 checkpoint 参数、不进行额外训练的情况下，对不同深度的 Transformer 层使用不同的固定 RoPE scale。设训练上下文长度为 $L_0=1024$，当前测试长度为 $L$，模型共有 $N$ 层，则第 $l$ 层的缩放系数定义为
+原始 Transformer 使用固定的正弦—余弦绝对位置编码，并将其直接加到 token embedding 上。设序列位置为 $m$，模型隐藏维度为 $d_{\mathrm{model}}$，第 $i$ 组二维位置分量对应的频率为
 
 $$
-s_l=\left(\frac{L}{L_0}\right)^{\frac{l}{N-1}},
-\qquad l=0,1,\ldots,N-1.
+\theta_i=10000^{-\frac{2i}{d_{\mathrm{model}}}},
+\qquad i=0,1,\ldots,\frac{d_{\mathrm{model}}}{2}-1.
 $$
 
-RoPE 旋转角由 $m\theta_i$ 改为
+位置 $m$ 在第 $2i$ 和第 $2i+1$ 个维度上的编码分别为
 
 $$
-\frac{m\theta_i}{s_l}.
+\mathrm{PE}(m,2i)=\sin(m\theta_i)
+=\sin\left(\frac{m}{10000^{2i/d_{\mathrm{model}}}}\right),
 $$
 
-因此，最浅层始终保持 $s_0=1$，最深层使用完整的长度扩展比例 $s_{N-1}=L/L_0$，中间层按照几何形式平滑过渡。该方法不增加可学习参数，也不改变 state dict，可以直接复用原始 RoPE checkpoint。
+$$
+\mathrm{PE}(m,2i+1)=\cos(m\theta_i)
+=\cos\left(\frac{m}{10000^{2i/d_{\mathrm{model}}}}\right).
+$$
 
-使用以下参数运行逐层缩放评测：
+因此，每一组二维位置分量可以写成
 
-```powershell
-python eval_pg19.py `
-  --checkpoint ..\rope_124m\best.pt `
-  --data-dir data\pg19_4096 `
-  --training-context 1024 `
-  --rope-scaling layerwise `
-  --device auto `
-  --dtype auto `
-  --result-dir result
-```
+$$
+\mathbf p_m^{(i)}=
+\begin{bmatrix}
+\sin(m\theta_i)\\
+\cos(m\theta_i)
+\end{bmatrix},
+$$
 
-在 1024 长度下，所有层的 scale 均为 1，逐层缩放模型与 baseline 的最大输出差为 0，说明 checkpoint 兼容且未改变训练长度内的基础计算。不同长度下的完整结果如下：
+完整的位置向量 $\mathbf p_m\in\mathbb R^{d_{\mathrm{model}}}$ 由所有频率分量拼接得到。对于位置 $m$ 处的 token embedding $\mathbf x_m$，输入 Transformer 的表示为
 
-| 测试长度 | Baseline 总体 PPL | V2 总体 PPL | Baseline 前 1024 PPL | V2 前 1024 PPL | Baseline 外推 PPL | V2 外推 PPL |
-| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1024 | 149.01 | 149.01 | 149.01 | 149.01 | — | — |
-| 2048 | 157.72 | 164.34 | 150.39 | 171.77 | 165.40 | **157.23** |
-| 4096 | 241.16 | 243.81 | 151.16 | 224.21 | 281.79 | **250.71** |
-| 8192 | 358.10 | **346.51** | 149.45 | 299.20 | 405.72 | **353.86** |
+$$
+\tilde{\mathbf x}_m=\mathbf x_m+\mathbf p_m.
+$$
 
-V2 对外推区域 PPL 的相对改善为：
+随后，内容信息和位置信息的和共同经过线性投影，生成 query、key 和 value：
 
-| 测试长度 | 外推 PPL 改善 |
-| ---: | ---: |
-| 2048 | 4.94% |
-| 4096 | 11.03% |
-| 8192 | 12.78% |
+$$
+\mathbf q_m=W_Q\tilde{\mathbf x}_m,\qquad
+\mathbf k_m=W_K\tilde{\mathbf x}_m,\qquad
+\mathbf v_m=W_V\tilde{\mathbf x}_m.
+$$
 
-结果表明，逐层增强缩放能够改善超出训练长度区域的预测性能，并且测试长度越长，改善越明显。在 8192 长度下，总体 PPL 也从 358.10 降至 346.51。
+位置 $m$ 对位置 $n$ 的注意力 logit 为
 
-但当前 V2 直接根据完整输入长度计算每层 scale，因此即使是长序列中的前 1024 个位置，也会使用缩放后的 RoPE。随着测试长度增长，这部分 PPL 明显恶化：4096 长度下增加到 224.21，8192 长度下增加到 299.20。说明简单的逐层缩放虽然缓解了远距离位置外推问题，却破坏了模型在训练长度范围内已经学到的位置分布。
+$$
+a_{m,n}=\frac{\mathbf q_m^{\mathsf T}\mathbf k_n}{\sqrt{d_k}},
+$$
 
-这一结果提示后续变体需要同时满足两个条件：
+因此原始 Transformer 的位置编码属于**加性绝对位置编码**：位置信号在进入 Self-Attention 之前与内容表示相加，再通过 $W_Q$ 和 $W_K$ 共同影响注意力分数。
 
-- 浅层或训练长度范围内尽可能保留原始 RoPE；
-- 只在较深层、较低频率或超出 1024 的位置上逐渐增强缩放。
+## RoPE 的位置编码
 
-### Baseline 与 V2 的预测分布对比
+原始 Transformer 将位置编码与 token embedding 相加，位置信息会与内容信息混合后共同进入线性投影。RoPE 则采用另一种思路：**不直接修改 token 表示，而是根据 token 的位置旋转 query 和 key，使注意力内积自然包含相对位置信息。**
 
-为了观察两种方法在具体 token 上的行为，从 1024、2048、4096 和 8192 四种上下文长度中各选择一个样本。每个样本都满足：
+设位置 $m$ 处的 query 为 $\mathbf q_m$，位置 $n$ 处的 key 为 $\mathbf k_n$。RoPE 将它们的相邻两个维度组成一个二维分量 $\mathbf q_m^{(i)}$ 和 $\mathbf k_n^{(i)}$。第 $i$ 个二维分量对应频率
 
-- baseline 和 V2 的最高概率 token 都等于真实的下一个 token；
-- 目标 token 不是 EOT、纯空白或其他无可读内容的 token；
-- 样本从对应 chunk 的最后 25% 区域中选择；长度超过 1024 时，该位置位于外推区域。
+$$
+\theta_i=b^{-\frac{2i}{d}},
+\qquad i=0,1,\ldots,\frac d2-1,
+$$
 
-| 上下文长度 | 预测位置 | 真实 token | Baseline 概率 | V2 概率 | Top-10 重合 | 概率重合度 | TV 距离 | JS 散度 |
-| ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1024 | 930 | ` to` | 0.976002 | 0.976002 | 10/10 | 1.000000 | 0.000000 | 0.000000 |
-| 2048 | 1996 | `'t` | 0.870992 | 0.898657 | 6/10 | 0.920057 | 0.079943 | 0.026531 |
-| 4096 | 3162 | `'t` | 0.746491 | 0.832525 | 4/10 | 0.844164 | 0.155836 | 0.046777 |
-| 8192 | 6151 | `'t` | 0.890414 | 0.919635 | 7/10 | 0.958715 | 0.041286 | 0.007115 |
+其中 $d$ 是 attention head 的维度，$b$ 是 RoPE base。定义二维旋转矩阵
 
-其中，概率重合度越接近 1，表示两个完整词表概率分布越一致；TV 距离和 JS 散度越接近 0，表示分布差异越小。
+$$
+R(\phi)=
+\begin{bmatrix}
+\cos\phi & -\sin\phi\\
+\sin\phi & \cos\phi
+\end{bmatrix}.
+$$
 
-- 在 1024 长度下，V2 的所有 scale 都为 1，因此两个模型的预测分布完全一致。
-- 在 2048、4096 和 8192 的所选外推样本上，两个模型都能正确预测目标 token，并且 V2 为正确 token 分配了更高概率。
-- 4096 样本的差异最大，Top-10 只有 4 个 token 重合，概率重合度为 0.844164，说明两种模型虽然给出了相同的 top-1，但其余候选 token 的排序和概率分配已经明显变化。
-- 8192 样本的概率重合度为 0.958715，说明该位置上两种分布仍然较接近。这些样本是为观察模型差异而选择的诊断样本，不代表整个数据集的平均表现。
+RoPE 根据绝对位置分别旋转 query 和 key：
 
-完整上下文、目标 token 排名和候选 token 概率见 [`result/pg19_baseline_vs_layerwise_joint_correct_samples.md`](result/pg19_baseline_vs_layerwise_joint_correct_samples.md)。各长度的分布图为：
+$$
+\tilde{\mathbf q}_m^{(i)}=R(m\theta_i)\mathbf q_m^{(i)},
+\qquad
+\tilde{\mathbf k}_n^{(i)}=R(n\theta_i)\mathbf k_n^{(i)}.
+$$
 
-- [`1024`](result/pg19_ctx1024_joint_correct_distribution.svg)
-- [`2048`](result/pg19_ctx2048_joint_correct_distribution.svg)
-- [`4096`](result/pg19_ctx4096_joint_correct_distribution.svg)
-- [`8192`](result/pg19_ctx8192_joint_correct_distribution.svg)
+关键在于，两个旋转后向量的内积满足
 
-结果文件保存在 `result`：
+$$
+\begin{aligned}
+\left(\tilde{\mathbf q}_m^{(i)}\right)^{\mathsf T}
+\tilde{\mathbf k}_n^{(i)}
+&=\left(\mathbf q_m^{(i)}\right)^{\mathsf T}
+R(m\theta_i)^{\mathsf T}R(n\theta_i)
+\mathbf k_n^{(i)}\\
+&=\left(\mathbf q_m^{(i)}\right)^{\mathsf T}
+R\big((n-m)\theta_i\big)
+\mathbf k_n^{(i)}.
+\end{aligned}
+$$
 
-```text
-result/
-  pg19_best_length_summary.csv
-  pg19_best_length_summary.json
-  pg19_ctx1024_best_summary.json
-  pg19_ctx1024_best_chunks.csv
-  pg19_ctx1024_best_books.csv
-  pg19_ctx2048_best_summary.json
-  pg19_ctx2048_best_layerwise_summary.json
-  pg19_best_baseline_vs_layerwise.csv
-  pg19_best_baseline_vs_layerwise.json
-  pg19_best_layerwise_length_summary.csv
-  pg19_best_layerwise_length_summary.json
-  pg19_baseline_vs_layerwise_joint_correct_samples.md
-  pg19_baseline_vs_layerwise_joint_correct_samples.json
-  pg19_ctx1024_joint_correct_distribution.svg
-  pg19_ctx2048_joint_correct_distribution.svg
-  pg19_ctx4096_joint_correct_distribution.svg
-  pg19_ctx8192_joint_correct_distribution.svg
-  ...
-```
+因此，虽然 query 和 key 分别按照绝对位置 $m$ 和 $n$ 进行旋转，但进入注意力分数的旋转角只与相对位置 $n-m$ 有关。完整的注意力 logit 为
 
-- `*_summary.json`：总体、训练长度内和外推区域的 loss/PPL，以及显存信息；
-- `*_chunks.csv`：每个 chunk 的 loss 和 PPL；
-- `*_books.csv`：每本书的汇总 loss 和 PPL；
-- `pg19_best_length_summary.*`：四种上下文长度的横向比较。
-- `*_layerwise_summary.json`：V2 逐层缩放的总体、训练长度内和外推区域指标；
-- `pg19_best_baseline_vs_layerwise.*`：baseline 与 V2 的直接对比及相对变化；
-- `pg19_best_layerwise_length_summary.*`：V2 在四种上下文长度下的汇总结果。
-- `pg19_baseline_vs_layerwise_joint_correct_samples.*`：双方 top-1 均正确时的预测概率、排名和分布匹配指标；
-- `pg19_ctx*_joint_correct_distribution.svg`：四种上下文长度对应的 token 概率分布图。
+$$
+a_{m,n}^{\mathrm{RoPE}}
+=\frac{1}{\sqrt d}
+\sum_{i=0}^{d/2-1}
+\left(\mathbf q_m^{(i)}\right)^{\mathsf T}
+R\big((n-m)\theta_i\big)
+\mathbf k_n^{(i)}.
+$$
 
-需要注意，该 checkpoint 只训练到 12,500 steps，尚未完成配置中的 100,000 steps。因此，这组结果主要用于验证评测管线和观察长度退化趋势，不应直接视为完整训练后 RoPE 模型的最终性能。
+RoPE 的几何含义是：位置不会简单地增加一个额外向量，而是改变 query 和 key 在各个二维平面中的方向。两个 token 的相对距离决定它们之间额外的旋转角，从而改变向量对齐程度和注意力分数。不同维度使用不同频率，使模型能够同时表示细粒度的局部距离和变化较慢的长距离关系。
 
-## 正式运行注意事项
+进一步将每个二维分量写成极坐标形式：
 
-- 论文没有报告具体 GPU、训练精度、gradient accumulation 或随机种子，本项目将这些部分实现为可配置项。
-- `batch size=64` 按 global batch size 处理，更适合单卡和多卡复现。
-- 正式训练不要使用 `--block-size` 覆盖论文的 1024。
-- checkpoint 保存模型、optimizer、GradScaler、迭代数和配置，可以中断恢复。
-- 数据准备采用流式写入，不需要把 OpenWebText 全部加载到内存。
+$$
+\mathbf q_m^{(i)}
+=\mu_{q,m}^{(i)}
+\begin{bmatrix}
+\cos\phi_{q,m}^{(i)}\\
+\sin\phi_{q,m}^{(i)}
+\end{bmatrix},
+\qquad
+\mathbf k_n^{(i)}
+=\mu_{k,n}^{(i)}
+\begin{bmatrix}
+\cos\phi_{k,n}^{(i)}\\
+\sin\phi_{k,n}^{(i)}
+\end{bmatrix},
+$$
+
+则该分量对注意力分数的贡献为
+
+$$
+\mu_{q,m}^{(i)}\mu_{k,n}^{(i)}
+\cos\left(
+(n-m)\theta_i
++\phi_{k,n}^{(i)}
+-\phi_{q,m}^{(i)}
+\right).
+$$
+
+这个表达式揭示了 RoPE 的核心机制：
+
+- $\mu_{q,m}^{(i)}\mu_{k,n}^{(i)}$ 主要反映两个 token 在该特征上的内容匹配强度；
+- $(n-m)\theta_i$ 编码 query 与 key 的相对位置；
+- $\phi_{k,n}^{(i)}-\phi_{q,m}^{(i)}$ 来自内容向量自身的方向。
+
+因此，RoPE 确实把相对位置引入了注意力内积，但内容相位和位置相位最终出现在同一个余弦函数中。换言之，token 内容不仅决定匹配强度，也可能移动某个频率分量所偏好的相对位置。这种“内容—位置耦合”正是后续 PoPE 尝试消除的问题。
