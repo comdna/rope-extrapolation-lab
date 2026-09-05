@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="582" viewBox="0 0 1100 582">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,"Microsoft YaHei",sans-serif}.label{font-size:13px}.small{font-size:11px;fill:#444}.title{font-size:20px;font-weight:700}</style>
+<text x="20" y="30" class="title">Context 1024: Baseline vs V2</text>
+<text x="20" y="53" class="small">Bar length uses log10(probability), clipped at 1e-12. Blue: baseline; orange: V2.</text>
+<line x1="250.0" y1="70" x2="250.0" y2="557" stroke="#dddddd"/>
+<text x="250.0" y="67" text-anchor="middle" class="small">10^-12</text>
+<line x1="430.0" y1="70" x2="430.0" y2="557" stroke="#dddddd"/>
+<text x="430.0" y="67" text-anchor="middle" class="small">10^-9</text>
+<line x1="610.0" y1="70" x2="610.0" y2="557" stroke="#dddddd"/>
+<text x="610.0" y="67" text-anchor="middle" class="small">10^-6</text>
+<line x1="790.0" y1="70" x2="790.0" y2="557" stroke="#dddddd"/>
+<text x="790.0" y="67" text-anchor="middle" class="small">10^-3</text>
+<line x1="970.0" y1="70" x2="970.0" y2="557" stroke="#dddddd"/>
+<text x="970.0" y="67" text-anchor="middle" class="small">10^0</text>
+<text x="20" y="102" class="label">\n</text>
+<rect x="250" y="86" width="720.0" height="13" fill="#4C78A8"/>
+<rect x="250" y="103" width="720.0" height="13" fill="#F58518"/>
+<text x="980" y="97" class="small">1</text>
+<text x="980" y="114" class="small">1</text>
+<text x="20" y="144" class="label">on</text>
+<rect x="250" y="128" width="306.3" height="13" fill="#4C78A8"/>
+<rect x="250" y="145" width="306.3" height="13" fill="#F58518"/>
+<text x="980" y="139" class="small">1.28e-07</text>
+<text x="980" y="156" class="small">1.28e-07</text>
+<text x="20" y="186" class="label">&lt;|endoftext|&gt;</text>
+<rect x="250" y="170" width="303.9" height="13" fill="#4C78A8"/>
+<rect x="250" y="187" width="303.9" height="13" fill="#F58518"/>
+<text x="980" y="181" class="small">1.16e-07</text>
+<text x="980" y="198" class="small">1.16e-07</text>
+<text x="20" y="228" class="label">-</text>
+<rect x="250" y="212" width="298.2" height="13" fill="#4C78A8"/>
+<rect x="250" y="229" width="298.2" height="13" fill="#F58518"/>
+<text x="980" y="223" class="small">9.33e-08</text>
+<text x="980" y="240" class="small">9.33e-08</text>
+<text x="20" y="270" class="label">the</text>
+<rect x="250" y="254" width="295.7" height="13" fill="#4C78A8"/>
+<rect x="250" y="271" width="295.7" height="13" fill="#F58518"/>
+<text x="980" y="265" class="small">8.49e-08</text>
+<text x="980" y="282" class="small">8.49e-08</text>
+<text x="20" y="312" class="label"> a</text>
+<rect x="250" y="296" width="290.0" height="13" fill="#4C78A8"/>
+<rect x="250" y="313" width="290.0" height="13" fill="#F58518"/>
+<text x="980" y="307" class="small">6.83e-08</text>
+<text x="980" y="324" class="small">6.83e-08</text>
+<text x="20" y="354" class="label">in</text>
+<rect x="250" y="338" width="288.4" height="13" fill="#4C78A8"/>
+<rect x="250" y="355" width="288.4" height="13" fill="#F58518"/>
+<text x="980" y="349" class="small">6.41e-08</text>
+<text x="980" y="366" class="small">6.41e-08</text>
+<text x="20" y="396" class="label"> cards</text>
+<rect x="250" y="380" width="288.4" height="13" fill="#4C78A8"/>
+<rect x="250" y="397" width="288.4" height="13" fill="#F58518"/>
+<text x="980" y="391" class="small">6.41e-08</text>
+<text x="980" y="408" class="small">6.41e-08</text>
+<text x="20" y="438" class="label"> their</text>
+<rect x="250" y="422" width="286.8" height="13" fill="#4C78A8"/>
+<rect x="250" y="439" width="286.8" height="13" fill="#F58518"/>
+<text x="980" y="433" class="small">6.02e-08</text>
+<text x="980" y="450" class="small">6.02e-08</text>
+<text x="20" y="480" class="label"> &#x27;</text>
+<rect x="250" y="464" width="285.2" height="13" fill="#4C78A8"/>
+<rect x="250" y="481" width="285.2" height="13" fill="#F58518"/>
+<text x="980" y="475" class="small">5.66e-08</text>
+<text x="980" y="492" class="small">5.66e-08</text>
+<text x="20" y="522" class="label">up ★</text>
+<rect x="250" y="506" width="172.4" height="13" fill="#4C78A8"/>
+<rect x="250" y="523" width="172.4" height="13" fill="#F58518"/>
+<text x="980" y="517" class="small">7.46e-10</text>
+<text x="980" y="534" class="small">7.46e-10</text>
+</svg>

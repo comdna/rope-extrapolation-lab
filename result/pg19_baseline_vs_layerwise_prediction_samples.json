@@ -1,0 +1,750 @@
+[
+  {
+    "context_length": 1024,
+    "book_id": "2544",
+    "chunk_index": 0,
+    "chunk_mean_loss_improvement": 0.0,
+    "prediction_position": 1024,
+    "is_extrapolated": false,
+    "target_id": 929,
+    "target_token": "up",
+    "context_excerpt": " light of the coach lamp which Yuba Bill had just unshipped\\nand brought to the window. He would have made some tart rejoinder, but\\nwas prevented by Yuba Bill addressing the passengers: \"Ye'll have to put\\nup",
+    "baseline": {
+      "target_loss": 21.0,
+      "target_probability": 7.464971418791322e-10,
+      "target_rank": 663,
+      "entropy_nats": 8.907090523280203e-05
+    },
+    "layerwise": {
+      "target_loss": 21.0,
+      "target_probability": 7.464971418791322e-10,
+      "target_rank": 663,
+      "entropy_nats": 8.907090523280203e-05
+    },
+    "target_loss_improvement": 0.0,
+    "jensen_shannon_divergence_nats": 0.0,
+    "tokens": [
+      {
+        "token_id": 198,
+        "token": "\\n",
+        "is_target": false,
+        "baseline_probability": 0.9999957084655762,
+        "layerwise_probability": 0.9999957084655762,
+        "probability_delta": 0.0,
+        "baseline_rank": 1,
+        "layerwise_rank": 1
+      },
+      {
+        "token_id": 261,
+        "token": "on",
+        "is_target": false,
+        "baseline_probability": 1.275185042004523e-07,
+        "layerwise_probability": 1.275185042004523e-07,
+        "probability_delta": 0.0,
+        "baseline_rank": 2,
+        "layerwise_rank": 2
+      },
+      {
+        "token_id": 50256,
+        "token": "<\\|endoftext\\|>",
+        "is_target": false,
+        "baseline_probability": 1.1610692496333286e-07,
+        "layerwise_probability": 1.1610692496333286e-07,
+        "probability_delta": 0.0,
+        "baseline_rank": 3,
+        "layerwise_rank": 3
+      },
+      {
+        "token_id": 12,
+        "token": "-",
+        "is_target": false,
+        "baseline_probability": 9.32945383169681e-08,
+        "layerwise_probability": 9.32945383169681e-08,
+        "probability_delta": 0.0,
+        "baseline_rank": 4,
+        "layerwise_rank": 4
+      },
+      {
+        "token_id": 1169,
+        "token": "the",
+        "is_target": false,
+        "baseline_probability": 8.494564696093221e-08,
+        "layerwise_probability": 8.494564696093221e-08,
+        "probability_delta": 0.0,
+        "baseline_rank": 5,
+        "layerwise_rank": 5
+      },
+      {
+        "token_id": 257,
+        "token": " a",
+        "is_target": false,
+        "baseline_probability": 6.82557441678e-08,
+        "layerwise_probability": 6.82557441678e-08,
+        "probability_delta": 0.0,
+        "baseline_rank": 6,
+        "layerwise_rank": 6
+      },
+      {
+        "token_id": 259,
+        "token": "in",
+        "is_target": false,
+        "baseline_probability": 6.412033570768472e-08,
+        "layerwise_probability": 6.412033570768472e-08,
+        "probability_delta": 0.0,
+        "baseline_rank": 7,
+        "layerwise_rank": 7
+      },
+      {
+        "token_id": 4116,
+        "token": " cards",
+        "is_target": false,
+        "baseline_probability": 6.412033570768472e-08,
+        "layerwise_probability": 6.412033570768472e-08,
+        "probability_delta": 0.0,
+        "baseline_rank": 7,
+        "layerwise_rank": 7
+      },
+      {
+        "token_id": 511,
+        "token": " their",
+        "is_target": false,
+        "baseline_probability": 6.023548593248051e-08,
+        "layerwise_probability": 6.023548593248051e-08,
+        "probability_delta": 0.0,
+        "baseline_rank": 9,
+        "layerwise_rank": 9
+      },
+      {
+        "token_id": 705,
+        "token": " '",
+        "is_target": false,
+        "baseline_probability": 5.658599988578317e-08,
+        "layerwise_probability": 5.658599988578317e-08,
+        "probability_delta": 0.0,
+        "baseline_rank": 10,
+        "layerwise_rank": 10
+      },
+      {
+        "token_id": 929,
+        "token": "up",
+        "is_target": true,
+        "baseline_probability": 7.464971418791322e-10,
+        "layerwise_probability": 7.464971418791322e-10,
+        "probability_delta": 0.0,
+        "baseline_rank": 663,
+        "layerwise_rank": 663
+      }
+    ]
+  },
+  {
+    "context_length": 2048,
+    "book_id": "3608",
+    "chunk_index": 79,
+    "chunk_mean_loss_improvement": 0.16153573989868164,
+    "prediction_position": 1459,
+    "is_extrapolated": true,
+    "target_id": 25591,
+    "target_token": "those",
+    "context_excerpt": "on, and exorbitant prices are charged for the articles they sell, to\\nenable the proprietors to amass fortunes, and to pay extortionate rents\\nto the landlords.  That is why the wages and salaries of nearly all\\nthose",
+    "baseline": {
+      "target_loss": 26.625,
+      "target_probability": 2.6505590257352996e-12,
+      "target_rank": 376,
+      "entropy_nats": 9.752777259564027e-06
+    },
+    "layerwise": {
+      "target_loss": 18.25,
+      "target_probability": 1.1861079229902316e-08,
+      "target_rank": 21,
+      "entropy_nats": 6.870784272905439e-05
+    },
+    "target_loss_improvement": 8.375,
+    "jensen_shannon_divergence_nats": 8.716144748177612e-07,
+    "tokens": [
+      {
+        "token_id": 198,
+        "token": "\\n",
+        "is_target": false,
+        "baseline_probability": 0.9999994039535522,
+        "layerwise_probability": 0.999996542930603,
+        "probability_delta": -2.86102294921875e-06,
+        "baseline_rank": 1,
+        "layerwise_rank": 1
+      },
+      {
+        "token_id": 50256,
+        "token": "<\\|endoftext\\|>",
+        "is_target": false,
+        "baseline_probability": 6.083590733396704e-07,
+        "layerwise_probability": 1.0030115618064883e-06,
+        "probability_delta": 3.946524884668179e-07,
+        "baseline_rank": 2,
+        "layerwise_rank": 2
+      },
+      {
+        "token_id": 12,
+        "token": "-",
+        "is_target": false,
+        "baseline_probability": 4.146171600494242e-11,
+        "layerwise_probability": 7.979911487154823e-08,
+        "probability_delta": 7.975765470291662e-08,
+        "baseline_rank": 21,
+        "layerwise_rank": 3
+      },
+      {
+        "token_id": 330,
+        "token": "ac",
+        "is_target": false,
+        "baseline_probability": 4.79954227403101e-12,
+        "layerwise_probability": 5.484507781261527e-08,
+        "probability_delta": 5.484027809643521e-08,
+        "baseline_rank": 184,
+        "layerwise_rank": 4
+      },
+      {
+        "token_id": 397,
+        "token": "ab",
+        "is_target": false,
+        "baseline_probability": 4.847365911442303e-11,
+        "layerwise_probability": 5.315767026559115e-08,
+        "probability_delta": 5.3109197040157596e-08,
+        "baseline_rank": 17,
+        "layerwise_rank": 5
+      },
+      {
+        "token_id": 661,
+        "token": " people",
+        "is_target": false,
+        "baseline_probability": 2.3759455774347016e-12,
+        "layerwise_probability": 4.271338838179872e-08,
+        "probability_delta": 4.2711011616347605e-08,
+        "baseline_rank": 431,
+        "layerwise_rank": 6
+      },
+      {
+        "token_id": 22896,
+        "token": "workers",
+        "is_target": false,
+        "baseline_probability": 6.259783056489221e-12,
+        "layerwise_probability": 3.541064330647714e-08,
+        "probability_delta": 3.5404383424975094e-08,
+        "baseline_rank": 136,
+        "layerwise_rank": 7
+      },
+      {
+        "token_id": 10,
+        "token": "+",
+        "is_target": false,
+        "baseline_probability": 2.8780136607231555e-10,
+        "layerwise_probability": 3.224175770810689e-08,
+        "probability_delta": 3.195395592570094e-08,
+        "baseline_rank": 4,
+        "layerwise_rank": 8
+      },
+      {
+        "token_id": 4409,
+        "token": " employees",
+        "is_target": false,
+        "baseline_probability": 3.403384995701031e-12,
+        "layerwise_probability": 3.224175770810689e-08,
+        "probability_delta": 3.22383542084026e-08,
+        "baseline_rank": 287,
+        "layerwise_rank": 8
+      },
+      {
+        "token_id": 3259,
+        "token": " workers",
+        "is_target": false,
+        "baseline_probability": 1.1223172998592323e-12,
+        "layerwise_probability": 2.8453250422444398e-08,
+        "probability_delta": 2.8452127764921897e-08,
+        "baseline_rank": 1072,
+        "layerwise_rank": 10
+      },
+      {
+        "token_id": 25591,
+        "token": "those",
+        "is_target": true,
+        "baseline_probability": 2.6505590257352996e-12,
+        "layerwise_probability": 1.1861079229902316e-08,
+        "probability_delta": 1.1858428905497931e-08,
+        "baseline_rank": 376,
+        "layerwise_rank": 21
+      },
+      {
+        "token_id": 532,
+        "token": " -",
+        "is_target": false,
+        "baseline_probability": 1.317650571985851e-10,
+        "layerwise_probability": 1.1496151586243286e-08,
+        "probability_delta": 1.1364386764967094e-08,
+        "baseline_rank": 8,
+        "layerwise_rank": 22
+      },
+      {
+        "token_id": 930,
+        "token": " \\|",
+        "is_target": false,
+        "baseline_probability": 1.1142484268589214e-08,
+        "layerwise_probability": 3.14287329494789e-09,
+        "probability_delta": -7.99961075159672e-09,
+        "baseline_rank": 3,
+        "layerwise_rank": 110
+      },
+      {
+        "token_id": 261,
+        "token": "on",
+        "is_target": false,
+        "baseline_probability": 7.05287564461976e-11,
+        "layerwise_probability": 1.0467365640920434e-08,
+        "probability_delta": 1.0396837168968887e-08,
+        "baseline_rank": 10,
+        "layerwise_rank": 24
+      },
+      {
+        "token_id": 5633,
+        "token": " ?",
+        "is_target": false,
+        "baseline_probability": 1.4930938430079976e-10,
+        "layerwise_probability": 5.780628420382072e-09,
+        "probability_delta": 5.6313189666923336e-09,
+        "baseline_rank": 7,
+        "layerwise_rank": 51
+      },
+      {
+        "token_id": 1635,
+        "token": " *",
+        "is_target": false,
+        "baseline_probability": 1.801014753999297e-10,
+        "layerwise_probability": 4.163630329401258e-09,
+        "probability_delta": 3.983529062168145e-09,
+        "baseline_rank": 5,
+        "layerwise_rank": 78
+      },
+      {
+        "token_id": 9,
+        "token": "*",
+        "is_target": false,
+        "baseline_probability": 7.991955014441388e-11,
+        "layerwise_probability": 3.1923661492072597e-09,
+        "probability_delta": 3.112446522735013e-09,
+        "baseline_rank": 9,
+        "layerwise_rank": 106
+      },
+      {
+        "token_id": 5595,
+        "token": " •",
+        "is_target": false,
+        "baseline_probability": 1.6398428448471947e-10,
+        "layerwise_probability": 1.156198470297909e-09,
+        "probability_delta": 9.922141996909772e-10,
+        "baseline_rank": 6,
+        "layerwise_rank": 276
+      }
+    ]
+  },
+  {
+    "context_length": 4096,
+    "book_id": "3608",
+    "chunk_index": 58,
+    "chunk_mean_loss_improvement": 0.5438899993896484,
+    "prediction_position": 3027,
+    "is_extrapolated": true,
+    "target_id": 660,
+    "target_token": "te",
+    "context_excerpt": " No\\ntime was allowed for tea, but some of them brought sufficient food with\\nthem in the morning to enable them to have a little about six o'clock\\nin the evening.  Others arranged for their children to bring them some\\nte",
+    "baseline": {
+      "target_loss": 22.25,
+      "target_probability": 2.2413991496161856e-10,
+      "target_rank": 201,
+      "entropy_nats": 1.1447789802332409e-05
+    },
+    "layerwise": {
+      "target_loss": 7.0,
+      "target_probability": 0.0009129191748797894,
+      "target_rank": 84,
+      "entropy_nats": 4.710183620452881
+    },
+    "target_loss_improvement": 15.25,
+    "jensen_shannon_divergence_nats": 0.3095739185810089,
+    "tokens": [
+      {
+        "token_id": 198,
+        "token": "\\n",
+        "is_target": false,
+        "baseline_probability": 0.9999994039535522,
+        "layerwise_probability": 0.3459838330745697,
+        "probability_delta": -0.6540155410766602,
+        "baseline_rank": 1,
+        "layerwise_rank": 1
+      },
+      {
+        "token_id": 1462,
+        "token": "to",
+        "is_target": false,
+        "baseline_probability": 1.997737308911951e-09,
+        "layerwise_probability": 0.04984370246529579,
+        "probability_delta": 0.04984369874000549,
+        "baseline_rank": 20,
+        "layerwise_rank": 2
+      },
+      {
+        "token_id": 64,
+        "token": "a",
+        "is_target": false,
+        "baseline_probability": 1.997737308911951e-09,
+        "layerwise_probability": 0.04398690536618233,
+        "probability_delta": 0.04398690164089203,
+        "baseline_rank": 20,
+        "layerwise_rank": 3
+      },
+      {
+        "token_id": 261,
+        "token": "on",
+        "is_target": false,
+        "baseline_probability": 7.65811059011412e-09,
+        "layerwise_probability": 0.03646642714738846,
+        "probability_delta": 0.03646641969680786,
+        "baseline_rank": 5,
+        "layerwise_rank": 4
+      },
+      {
+        "token_id": 1169,
+        "token": "the",
+        "is_target": false,
+        "baseline_probability": 1.8767007947673164e-09,
+        "layerwise_probability": 0.023544495925307274,
+        "probability_delta": 0.023544494062662125,
+        "baseline_rank": 23,
+        "layerwise_rank": 5
+      },
+      {
+        "token_id": 1659,
+        "token": "of",
+        "is_target": false,
+        "baseline_probability": 4.944447073995661e-09,
+        "layerwise_probability": 0.019519073888659477,
+        "probability_delta": 0.01951906830072403,
+        "baseline_rank": 6,
+        "layerwise_rank": 6
+      },
+      {
+        "token_id": 259,
+        "token": "in",
+        "is_target": false,
+        "baseline_probability": 3.732264719502609e-09,
+        "layerwise_probability": 0.018336471170186996,
+        "probability_delta": 0.018336467444896698,
+        "baseline_rank": 7,
+        "layerwise_rank": 7
+      },
+      {
+        "token_id": 568,
+        "token": "so",
+        "is_target": false,
+        "baseline_probability": 7.901205023586044e-09,
+        "layerwise_probability": 0.012602460570633411,
+        "probability_delta": 0.012602453120052814,
+        "baseline_rank": 4,
+        "layerwise_rank": 8
+      },
+      {
+        "token_id": 83,
+        "token": "t",
+        "is_target": false,
+        "baseline_probability": 1.7087553594308247e-09,
+        "layerwise_probability": 0.008661536499857903,
+        "probability_delta": 0.008661534637212753,
+        "baseline_rank": 24,
+        "layerwise_rank": 9
+      },
+      {
+        "token_id": 1640,
+        "token": "for",
+        "is_target": false,
+        "baseline_probability": 1.5558394572678935e-09,
+        "layerwise_probability": 0.007643778342753649,
+        "probability_delta": 0.007643776945769787,
+        "baseline_rank": 28,
+        "layerwise_rank": 10
+      },
+      {
+        "token_id": 67,
+        "token": "d",
+        "is_target": false,
+        "baseline_probability": 8.953237262687708e-09,
+        "layerwise_probability": 0.005253486800938845,
+        "probability_delta": 0.005253477953374386,
+        "baseline_rank": 3,
+        "layerwise_rank": 14
+      },
+      {
+        "token_id": 11,
+        "token": ",",
+        "is_target": false,
+        "baseline_probability": 3.506138490649846e-09,
+        "layerwise_probability": 0.0009129191748797894,
+        "probability_delta": 0.0009129156824201345,
+        "baseline_rank": 8,
+        "layerwise_rank": 84
+      },
+      {
+        "token_id": 660,
+        "token": "te",
+        "is_target": true,
+        "baseline_probability": 2.2413991496161856e-10,
+        "layerwise_probability": 0.0009129191748797894,
+        "probability_delta": 0.0009129189420491457,
+        "baseline_rank": 201,
+        "layerwise_rank": 84
+      },
+      {
+        "token_id": 276,
+        "token": "ed",
+        "is_target": false,
+        "baseline_probability": 3.506138490649846e-09,
+        "layerwise_probability": 0.00040510541293770075,
+        "probability_delta": 0.00040510192047804594,
+        "baseline_rank": 8,
+        "layerwise_rank": 164
+      },
+      {
+        "token_id": 532,
+        "token": " -",
+        "is_target": false,
+        "baseline_probability": 2.906690665938072e-09,
+        "layerwise_probability": 0.00021016591927036643,
+        "probability_delta": 0.00021016300888732076,
+        "baseline_rank": 10,
+        "layerwise_rank": 280
+      },
+      {
+        "token_id": 50256,
+        "token": "<\\|endoftext\\|>",
+        "is_target": false,
+        "baseline_probability": 2.1024325747021066e-07,
+        "layerwise_probability": 9.326056169811636e-05,
+        "probability_delta": 9.305031562689692e-05,
+        "baseline_rank": 2,
+        "layerwise_rank": 530
+      }
+    ]
+  },
+  {
+    "context_length": 8192,
+    "book_id": "3608",
+    "chunk_index": 34,
+    "chunk_mean_loss_improvement": 0.40631723403930664,
+    "prediction_position": 2709,
+    "is_extrapolated": true,
+    "target_id": 292,
+    "target_token": "as",
+    "context_excerpt": " be regarded as so many travelling lunatic\\nasylums, the inmates of each exhibiting different degrees and forms of\\nmental disorder.\\n\\nThe occupants of the first--Rushton, Didlum and Co.--might be classed\\nas",
+    "baseline": {
+      "target_loss": 23.0,
+      "target_probability": 1.026187676500534e-10,
+      "target_rank": 71,
+      "entropy_nats": 5.4539041229872964e-06
+    },
+    "layerwise": {
+      "target_loss": 7.6875,
+      "target_probability": 0.0004561555106192827,
+      "target_rank": 15,
+      "entropy_nats": 0.7219420671463013
+    },
+    "target_loss_improvement": 15.3125,
+    "jensen_shannon_divergence_nats": 0.0232313834130764,
+    "tokens": [
+      {
+        "token_id": 198,
+        "token": "\\n",
+        "is_target": false,
+        "baseline_probability": 0.9999997615814209,
+        "layerwise_probability": 0.9345624446868896,
+        "probability_delta": -0.06543731689453125,
+        "baseline_rank": 1,
+        "layerwise_rank": 1
+      },
+      {
+        "token_id": 1659,
+        "token": "of",
+        "is_target": false,
+        "baseline_probability": 3.3647398756109226e-10,
+        "layerwise_probability": 0.00316634657792747,
+        "probability_delta": 0.0031663463450968266,
+        "baseline_rank": 24,
+        "layerwise_rank": 2
+      },
+      {
+        "token_id": 276,
+        "token": "ed",
+        "is_target": false,
+        "baseline_probability": 3.695444228402067e-10,
+        "layerwise_probability": 0.0023165487218648195,
+        "probability_delta": 0.0023165482562035322,
+        "baseline_rank": 20,
+        "layerwise_rank": 3
+      },
+      {
+        "token_id": 261,
+        "token": "on",
+        "is_target": false,
+        "baseline_probability": 1.2898366819058538e-09,
+        "layerwise_probability": 0.0020443471148610115,
+        "probability_delta": 0.0020443457178771496,
+        "baseline_rank": 4,
+        "layerwise_rank": 4
+      },
+      {
+        "token_id": 64,
+        "token": "a",
+        "is_target": false,
+        "baseline_probability": 7.276760444208108e-11,
+        "layerwise_probability": 0.0016948231495916843,
+        "probability_delta": 0.0016948230331763625,
+        "baseline_rank": 99,
+        "layerwise_rank": 5
+      },
+      {
+        "token_id": 67,
+        "token": "d",
+        "is_target": false,
+        "baseline_probability": 2.78946754583842e-10,
+        "layerwise_probability": 0.0016948231495916843,
+        "probability_delta": 0.0016948229167610407,
+        "baseline_rank": 28,
+        "layerwise_rank": 5
+      },
+      {
+        "token_id": 22474,
+        "token": "were",
+        "is_target": false,
+        "baseline_probability": 2.4374094756418607e-11,
+        "layerwise_probability": 0.0010942600201815367,
+        "probability_delta": 0.0010942600201815367,
+        "baseline_rank": 327,
+        "layerwise_rank": 7
+      },
+      {
+        "token_id": 66,
+        "token": "c",
+        "is_target": false,
+        "baseline_probability": 9.343546075735176e-11,
+        "layerwise_probability": 0.0008005778072401881,
+        "probability_delta": 0.0008005776908248663,
+        "baseline_rank": 80,
+        "layerwise_rank": 8
+      },
+      {
+        "token_id": 82,
+        "token": "s",
+        "is_target": false,
+        "baseline_probability": 6.835883942235554e-11,
+        "layerwise_probability": 0.0007520732469856739,
+        "probability_delta": 0.000752073188778013,
+        "baseline_rank": 107,
+        "layerwise_rank": 9
+      },
+      {
+        "token_id": 268,
+        "token": "en",
+        "is_target": false,
+        "baseline_probability": 7.276760444208108e-11,
+        "layerwise_probability": 0.0006637023179791868,
+        "probability_delta": 0.0006637022597715259,
+        "baseline_rank": 99,
+        "layerwise_rank": 10
+      },
+      {
+        "token_id": 292,
+        "token": "as",
+        "is_target": true,
+        "baseline_probability": 1.026187676500534e-10,
+        "layerwise_probability": 0.0004561555106192827,
+        "probability_delta": 0.0004561553942039609,
+        "baseline_rank": 71,
+        "layerwise_rank": 15
+      },
+      {
+        "token_id": 11,
+        "token": ",",
+        "is_target": false,
+        "baseline_probability": 1.2501525370467448e-09,
+        "layerwise_probability": 0.00031351076904684305,
+        "probability_delta": 0.0003135095175821334,
+        "baseline_rank": 6,
+        "layerwise_rank": 21
+      },
+      {
+        "token_id": 26,
+        "token": ";",
+        "is_target": false,
+        "baseline_probability": 1.416608386151097e-09,
+        "layerwise_probability": 0.00016264725127257407,
+        "probability_delta": 0.00016264583973679692,
+        "baseline_rank": 3,
+        "layerwise_rank": 47
+      },
+      {
+        "token_id": 5633,
+        "token": " ?",
+        "is_target": false,
+        "baseline_probability": 9.736198514076477e-10,
+        "layerwise_probability": 6.173392466735095e-05,
+        "probability_delta": 6.173294968903065e-05,
+        "baseline_rank": 9,
+        "layerwise_rank": 109
+      },
+      {
+        "token_id": 290,
+        "token": " and",
+        "is_target": false,
+        "baseline_probability": 1.2501525370467448e-09,
+        "layerwise_probability": 6.173392466735095e-05,
+        "probability_delta": 6.173267320264131e-05,
+        "baseline_rank": 6,
+        "layerwise_rank": 109
+      },
+      {
+        "token_id": 532,
+        "token": " -",
+        "is_target": false,
+        "baseline_probability": 1.036412955457422e-09,
+        "layerwise_probability": 5.620938463835046e-05,
+        "probability_delta": 5.6208347814390436e-05,
+        "baseline_rank": 8,
+        "layerwise_rank": 121
+      },
+      {
+        "token_id": 50256,
+        "token": "<\\|endoftext\\|>",
+        "is_target": false,
+        "baseline_probability": 2.238028713463791e-07,
+        "layerwise_probability": 4.37759117630776e-05,
+        "probability_delta": 4.3552110582822934e-05,
+        "baseline_rank": 2,
+        "layerwise_rank": 160
+      },
+      {
+        "token_id": 357,
+        "token": " (",
+        "is_target": false,
+        "baseline_probability": 9.736198514076477e-10,
+        "layerwise_probability": 3.6291505239205435e-05,
+        "probability_delta": 3.6290530260885134e-05,
+        "baseline_rank": 9,
+        "layerwise_rank": 195
+      },
+      {
+        "token_id": 42796,
+        "token": " tho",
+        "is_target": false,
+        "baseline_probability": 1.2898366819058538e-09,
+        "layerwise_probability": 2.5734532755450346e-05,
+        "probability_delta": 2.573324309196323e-05,
+        "baseline_rank": 4,
+        "layerwise_rank": 273
+      }
+    ]
+  }
+]

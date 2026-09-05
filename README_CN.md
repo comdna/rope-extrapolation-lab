@@ -355,6 +355,35 @@ V2 对外推区域 PPL 的相对改善为：
 - 浅层或训练长度范围内尽可能保留原始 RoPE；
 - 只在较深层、较低频率或超出 1024 的位置上逐渐增强缩放。
 
+### Baseline 与 V2 的预测分布对比
+
+为了观察两种方法在具体 token 上的行为，从 1024、2048、4096 和 8192 四种上下文长度中各选择一个样本。每个样本都满足：
+
+- baseline 和 V2 的最高概率 token 都等于真实的下一个 token；
+- 目标 token 不是 EOT、纯空白或其他无可读内容的 token；
+- 样本从对应 chunk 的最后 25% 区域中选择；长度超过 1024 时，该位置位于外推区域。
+
+| 上下文长度 | 预测位置 | 真实 token | Baseline 概率 | V2 概率 | Top-10 重合 | 概率重合度 | TV 距离 | JS 散度 |
+| ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1024 | 930 | ` to` | 0.976002 | 0.976002 | 10/10 | 1.000000 | 0.000000 | 0.000000 |
+| 2048 | 1996 | `'t` | 0.870992 | 0.898657 | 6/10 | 0.920057 | 0.079943 | 0.026531 |
+| 4096 | 3162 | `'t` | 0.746491 | 0.832525 | 4/10 | 0.844164 | 0.155836 | 0.046777 |
+| 8192 | 6151 | `'t` | 0.890414 | 0.919635 | 7/10 | 0.958715 | 0.041286 | 0.007115 |
+
+其中，概率重合度越接近 1，表示两个完整词表概率分布越一致；TV 距离和 JS 散度越接近 0，表示分布差异越小。
+
+- 在 1024 长度下，V2 的所有 scale 都为 1，因此两个模型的预测分布完全一致。
+- 在 2048、4096 和 8192 的所选外推样本上，两个模型都能正确预测目标 token，并且 V2 为正确 token 分配了更高概率。
+- 4096 样本的差异最大，Top-10 只有 4 个 token 重合，概率重合度为 0.844164，说明两种模型虽然给出了相同的 top-1，但其余候选 token 的排序和概率分配已经明显变化。
+- 8192 样本的概率重合度为 0.958715，说明该位置上两种分布仍然较接近。这些样本是为观察模型差异而选择的诊断样本，不代表整个数据集的平均表现。
+
+完整上下文、目标 token 排名和候选 token 概率见 [`result/pg19_baseline_vs_layerwise_joint_correct_samples.md`](result/pg19_baseline_vs_layerwise_joint_correct_samples.md)。各长度的分布图为：
+
+- [`1024`](result/pg19_ctx1024_joint_correct_distribution.svg)
+- [`2048`](result/pg19_ctx2048_joint_correct_distribution.svg)
+- [`4096`](result/pg19_ctx4096_joint_correct_distribution.svg)
+- [`8192`](result/pg19_ctx8192_joint_correct_distribution.svg)
+
 结果文件保存在 `result`：
 
 ```text
@@ -370,6 +399,12 @@ result/
   pg19_best_baseline_vs_layerwise.json
   pg19_best_layerwise_length_summary.csv
   pg19_best_layerwise_length_summary.json
+  pg19_baseline_vs_layerwise_joint_correct_samples.md
+  pg19_baseline_vs_layerwise_joint_correct_samples.json
+  pg19_ctx1024_joint_correct_distribution.svg
+  pg19_ctx2048_joint_correct_distribution.svg
+  pg19_ctx4096_joint_correct_distribution.svg
+  pg19_ctx8192_joint_correct_distribution.svg
   ...
 ```
 
@@ -380,6 +415,8 @@ result/
 - `*_layerwise_summary.json`：V2 逐层缩放的总体、训练长度内和外推区域指标；
 - `pg19_best_baseline_vs_layerwise.*`：baseline 与 V2 的直接对比及相对变化；
 - `pg19_best_layerwise_length_summary.*`：V2 在四种上下文长度下的汇总结果。
+- `pg19_baseline_vs_layerwise_joint_correct_samples.*`：双方 top-1 均正确时的预测概率、排名和分布匹配指标；
+- `pg19_ctx*_joint_correct_distribution.svg`：四种上下文长度对应的 token 概率分布图。
 
 需要注意，该 checkpoint 只训练到 12,500 steps，尚未完成配置中的 100,000 steps。因此，这组结果主要用于验证评测管线和观察长度退化趋势，不应直接视为完整训练后 RoPE 模型的最终性能。
 

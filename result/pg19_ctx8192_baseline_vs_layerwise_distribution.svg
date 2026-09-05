@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="918" viewBox="0 0 1100 918">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,"Microsoft YaHei",sans-serif}.label{font-size:13px}.small{font-size:11px;fill:#444}.title{font-size:20px;font-weight:700}</style>
+<text x="20" y="30" class="title">Context 8192: Baseline vs V2</text>
+<text x="20" y="53" class="small">Bar length uses log10(probability), clipped at 1e-12. Blue: baseline; orange: V2.</text>
+<line x1="250.0" y1="70" x2="250.0" y2="893" stroke="#dddddd"/>
+<text x="250.0" y="67" text-anchor="middle" class="small">10^-12</text>
+<line x1="430.0" y1="70" x2="430.0" y2="893" stroke="#dddddd"/>
+<text x="430.0" y="67" text-anchor="middle" class="small">10^-9</text>
+<line x1="610.0" y1="70" x2="610.0" y2="893" stroke="#dddddd"/>
+<text x="610.0" y="67" text-anchor="middle" class="small">10^-6</text>
+<line x1="790.0" y1="70" x2="790.0" y2="893" stroke="#dddddd"/>
+<text x="790.0" y="67" text-anchor="middle" class="small">10^-3</text>
+<line x1="970.0" y1="70" x2="970.0" y2="893" stroke="#dddddd"/>
+<text x="970.0" y="67" text-anchor="middle" class="small">10^0</text>
+<text x="20" y="102" class="label">\n</text>
+<rect x="250" y="86" width="720.0" height="13" fill="#4C78A8"/>
+<rect x="250" y="103" width="718.2" height="13" fill="#F58518"/>
+<text x="980" y="97" class="small">1</text>
+<text x="980" y="114" class="small">0.935</text>
+<text x="20" y="144" class="label">of</text>
+<rect x="250" y="128" width="151.6" height="13" fill="#4C78A8"/>
+<rect x="250" y="145" width="570.0" height="13" fill="#F58518"/>
+<text x="980" y="139" class="small">3.36e-10</text>
+<text x="980" y="156" class="small">0.00317</text>
+<text x="20" y="186" class="label">ed</text>
+<rect x="250" y="170" width="154.1" height="13" fill="#4C78A8"/>
+<rect x="250" y="187" width="561.9" height="13" fill="#F58518"/>
+<text x="980" y="181" class="small">3.7e-10</text>
+<text x="980" y="198" class="small">0.00232</text>
+<text x="20" y="228" class="label">on</text>
+<rect x="250" y="212" width="186.6" height="13" fill="#4C78A8"/>
+<rect x="250" y="229" width="558.6" height="13" fill="#F58518"/>
+<text x="980" y="223" class="small">1.29e-09</text>
+<text x="980" y="240" class="small">0.00204</text>
+<text x="20" y="270" class="label">a</text>
+<rect x="250" y="254" width="111.7" height="13" fill="#4C78A8"/>
+<rect x="250" y="271" width="553.7" height="13" fill="#F58518"/>
+<text x="980" y="265" class="small">7.28e-11</text>
+<text x="980" y="282" class="small">0.00169</text>
+<text x="20" y="312" class="label">d</text>
+<rect x="250" y="296" width="146.7" height="13" fill="#4C78A8"/>
+<rect x="250" y="313" width="553.7" height="13" fill="#F58518"/>
+<text x="980" y="307" class="small">2.79e-10</text>
+<text x="980" y="324" class="small">0.00169</text>
+<text x="20" y="354" class="label">were</text>
+<rect x="250" y="338" width="83.2" height="13" fill="#4C78A8"/>
+<rect x="250" y="355" width="542.3" height="13" fill="#F58518"/>
+<text x="980" y="349" class="small">2.44e-11</text>
+<text x="980" y="366" class="small">0.00109</text>
+<text x="20" y="396" class="label">c</text>
+<rect x="250" y="380" width="118.2" height="13" fill="#4C78A8"/>
+<rect x="250" y="397" width="534.2" height="13" fill="#F58518"/>
+<text x="980" y="391" class="small">9.34e-11</text>
+<text x="980" y="408" class="small">0.000801</text>
+<text x="20" y="438" class="label">s</text>
+<rect x="250" y="422" width="110.1" height="13" fill="#4C78A8"/>
+<rect x="250" y="439" width="532.6" height="13" fill="#F58518"/>
+<text x="980" y="433" class="small">6.84e-11</text>
+<text x="980" y="450" class="small">0.000752</text>
+<text x="20" y="480" class="label">en</text>
+<rect x="250" y="464" width="111.7" height="13" fill="#4C78A8"/>
+<rect x="250" y="481" width="529.3" height="13" fill="#F58518"/>
+<text x="980" y="475" class="small">7.28e-11</text>
+<text x="980" y="492" class="small">0.000664</text>
+<text x="20" y="522" class="label">as ★</text>
+<rect x="250" y="506" width="120.7" height="13" fill="#4C78A8"/>
+<rect x="250" y="523" width="519.5" height="13" fill="#F58518"/>
+<text x="980" y="517" class="small">1.03e-10</text>
+<text x="980" y="534" class="small">0.000456</text>
+<text x="20" y="564" class="label">,</text>
+<rect x="250" y="548" width="185.8" height="13" fill="#4C78A8"/>
+<rect x="250" y="565" width="509.8" height="13" fill="#F58518"/>
+<text x="980" y="559" class="small">1.25e-09</text>
+<text x="980" y="576" class="small">0.000314</text>
+<text x="20" y="606" class="label">;</text>
+<rect x="250" y="590" width="189.1" height="13" fill="#4C78A8"/>
+<rect x="250" y="607" width="492.7" height="13" fill="#F58518"/>
+<text x="980" y="601" class="small">1.42e-09</text>
+<text x="980" y="618" class="small">0.000163</text>
+<text x="20" y="648" class="label"> ?</text>
+<rect x="250" y="632" width="179.3" height="13" fill="#4C78A8"/>
+<rect x="250" y="649" width="467.4" height="13" fill="#F58518"/>
+<text x="980" y="643" class="small">9.74e-10</text>
+<text x="980" y="660" class="small">6.17e-05</text>
+<text x="20" y="690" class="label"> and</text>
+<rect x="250" y="674" width="185.8" height="13" fill="#4C78A8"/>
+<rect x="250" y="691" width="467.4" height="13" fill="#F58518"/>
+<text x="980" y="685" class="small">1.25e-09</text>
+<text x="980" y="702" class="small">6.17e-05</text>
+<text x="20" y="732" class="label"> -</text>
+<rect x="250" y="716" width="180.9" height="13" fill="#4C78A8"/>
+<rect x="250" y="733" width="465.0" height="13" fill="#F58518"/>
+<text x="980" y="727" class="small">1.04e-09</text>
+<text x="980" y="744" class="small">5.62e-05</text>
+<text x="20" y="774" class="label">&lt;|endoftext|&gt;</text>
+<rect x="250" y="758" width="321.0" height="13" fill="#4C78A8"/>
+<rect x="250" y="775" width="458.5" height="13" fill="#F58518"/>
+<text x="980" y="769" class="small">2.24e-07</text>
+<text x="980" y="786" class="small">4.38e-05</text>
+<text x="20" y="816" class="label"> (</text>
+<rect x="250" y="800" width="179.3" height="13" fill="#4C78A8"/>
+<rect x="250" y="817" width="453.6" height="13" fill="#F58518"/>
+<text x="980" y="811" class="small">9.74e-10</text>
+<text x="980" y="828" class="small">3.63e-05</text>
+<text x="20" y="858" class="label"> tho</text>
+<rect x="250" y="842" width="186.6" height="13" fill="#4C78A8"/>
+<rect x="250" y="859" width="444.6" height="13" fill="#F58518"/>
+<text x="980" y="853" class="small">1.29e-09</text>
+<text x="980" y="870" class="small">2.57e-05</text>
+</svg>

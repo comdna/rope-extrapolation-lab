@@ -355,6 +355,35 @@ This result suggests that future variants should satisfy both of the following c
 - Preserve the original RoPE as much as possible in shallow layers or within the training-length region.
 - Increase scaling gradually only in deeper layers, at lower frequencies, or at positions beyond 1024.
 
+### Baseline vs. V2 Prediction Distributions
+
+To inspect the behavior of the two methods at individual token positions, one sample was selected for each context length: 1024, 2048, 4096, and 8192. Every selected sample satisfies the following conditions:
+
+- The highest-probability token from both the baseline and V2 is the actual next token.
+- The target is not EOT, whitespace-only, or another non-readable token.
+- The sample is selected from the final 25% of its chunk. For lengths greater than 1024, the selected position is in the extrapolated region.
+
+| Context length | Prediction position | Target token | Baseline probability | V2 probability | Top-10 overlap | Probability overlap | TV distance | JS divergence |
+| ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1024 | 930 | ` to` | 0.976002 | 0.976002 | 10/10 | 1.000000 | 0.000000 | 0.000000 |
+| 2048 | 1996 | `'t` | 0.870992 | 0.898657 | 6/10 | 0.920057 | 0.079943 | 0.026531 |
+| 4096 | 3162 | `'t` | 0.746491 | 0.832525 | 4/10 | 0.844164 | 0.155836 | 0.046777 |
+| 8192 | 6151 | `'t` | 0.890414 | 0.919635 | 7/10 | 0.958715 | 0.041286 | 0.007115 |
+
+A probability overlap closer to 1 indicates more similar full-vocabulary distributions, while smaller total variation (TV) distance and Jensen-Shannon (JS) divergence indicate stronger agreement.
+
+- At length 1024, every V2 scale is 1, so the two prediction distributions are identical.
+- In the selected extrapolated samples at lengths 2048, 4096, and 8192, both models predict the correct token and V2 assigns it a higher probability.
+- The length-4096 sample shows the largest difference. Only 4 of the top-10 tokens overlap, and the probability overlap is 0.844164. Although the top-1 prediction is unchanged, the ranking and probability allocation of the remaining candidates differ substantially.
+- At length 8192, the probability overlap is 0.958715, so the two distributions remain relatively close at this position. These deliberately selected diagnostic samples do not represent average dataset behavior.
+
+Full contexts, target-token ranks, and candidate probabilities are available in [`result/pg19_baseline_vs_layerwise_joint_correct_samples.md`](result/pg19_baseline_vs_layerwise_joint_correct_samples.md). Distribution plots for each context length are available here:
+
+- [`1024`](result/pg19_ctx1024_joint_correct_distribution.svg)
+- [`2048`](result/pg19_ctx2048_joint_correct_distribution.svg)
+- [`4096`](result/pg19_ctx4096_joint_correct_distribution.svg)
+- [`8192`](result/pg19_ctx8192_joint_correct_distribution.svg)
+
 Result files are stored in `result`:
 
 ```text
@@ -370,6 +399,12 @@ result/
   pg19_best_baseline_vs_layerwise.json
   pg19_best_layerwise_length_summary.csv
   pg19_best_layerwise_length_summary.json
+  pg19_baseline_vs_layerwise_joint_correct_samples.md
+  pg19_baseline_vs_layerwise_joint_correct_samples.json
+  pg19_ctx1024_joint_correct_distribution.svg
+  pg19_ctx2048_joint_correct_distribution.svg
+  pg19_ctx4096_joint_correct_distribution.svg
+  pg19_ctx8192_joint_correct_distribution.svg
   ...
 ```
 
@@ -380,6 +415,8 @@ result/
 - `*_layerwise_summary.json`: overall, within-training-length, and extrapolated-region metrics for V2 layer-wise scaling.
 - `pg19_best_baseline_vs_layerwise.*`: direct comparison and relative changes between the baseline and V2.
 - `pg19_best_layerwise_length_summary.*`: V2 summary across the four context lengths.
+- `pg19_baseline_vs_layerwise_joint_correct_samples.*`: prediction probabilities, ranks, and distribution-agreement metrics when both models have the correct top-1 token.
+- `pg19_ctx*_joint_correct_distribution.svg`: token-probability plots for the four context lengths.
 
 Note that this checkpoint was trained for only 12,500 steps rather than the configured 100,000 steps. These results are therefore intended primarily to validate the evaluation pipeline and reveal length-degradation trends; they should not be treated as the final performance of a fully trained RoPE model.
 

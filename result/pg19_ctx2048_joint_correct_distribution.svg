@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="708" viewBox="0 0 1100 708">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,"Microsoft YaHei",sans-serif}.label{font-size:13px}.small{font-size:11px;fill:#444}.title{font-size:20px;font-weight:700}</style>
+<text x="20" y="30" class="title">Context 2048: Baseline vs V2</text>
+<text x="20" y="53" class="small">Bar length uses log10(probability), clipped at 1e-12. Blue: baseline; orange: V2.</text>
+<line x1="250.0" y1="70" x2="250.0" y2="683" stroke="#dddddd"/>
+<text x="250.0" y="67" text-anchor="middle" class="small">10^-12</text>
+<line x1="430.0" y1="70" x2="430.0" y2="683" stroke="#dddddd"/>
+<text x="430.0" y="67" text-anchor="middle" class="small">10^-9</text>
+<line x1="610.0" y1="70" x2="610.0" y2="683" stroke="#dddddd"/>
+<text x="610.0" y="67" text-anchor="middle" class="small">10^-6</text>
+<line x1="790.0" y1="70" x2="790.0" y2="683" stroke="#dddddd"/>
+<text x="790.0" y="67" text-anchor="middle" class="small">10^-3</text>
+<line x1="970.0" y1="70" x2="970.0" y2="683" stroke="#dddddd"/>
+<text x="970.0" y="67" text-anchor="middle" class="small">10^0</text>
+<text x="20" y="102" class="label">&#x27;t ★</text>
+<rect x="250" y="86" width="716.4" height="13" fill="#4C78A8"/>
+<rect x="250" y="103" width="717.2" height="13" fill="#F58518"/>
+<text x="980" y="97" class="small">0.871</text>
+<text x="980" y="114" class="small">0.899</text>
+<text x="20" y="144" class="label">�</text>
+<rect x="250" y="128" width="630.1" height="13" fill="#4C78A8"/>
+<rect x="250" y="145" width="655.3" height="13" fill="#F58518"/>
+<text x="980" y="139" class="small">0.0317</text>
+<text x="980" y="156" class="small">0.0836</text>
+<text x="20" y="186" class="label">n</text>
+<rect x="250" y="170" width="607.3" height="13" fill="#4C78A8"/>
+<rect x="250" y="187" width="554.4" height="13" fill="#F58518"/>
+<text x="980" y="181" class="small">0.0132</text>
+<text x="980" y="198" class="small">0.00173</text>
+<text x="20" y="228" class="label">&#x27;</text>
+<rect x="250" y="212" width="592.6" height="13" fill="#4C78A8"/>
+<rect x="250" y="229" width="590.2" height="13" fill="#F58518"/>
+<text x="980" y="223" class="small">0.00754</text>
+<text x="980" y="240" class="small">0.00686</text>
+<text x="20" y="270" class="label">a</text>
+<rect x="250" y="254" width="576.3" height="13" fill="#4C78A8"/>
+<rect x="250" y="271" width="496.5" height="13" fill="#F58518"/>
+<text x="980" y="265" class="small">0.00403</text>
+<text x="980" y="282" class="small">0.000189</text>
+<text x="20" y="312" class="label">c</text>
+<rect x="250" y="296" width="576.3" height="13" fill="#4C78A8"/>
+<rect x="250" y="313" width="485.1" height="13" fill="#F58518"/>
+<text x="980" y="307" class="small">0.00403</text>
+<text x="980" y="324" class="small">0.000122</text>
+<text x="20" y="354" class="label">of</text>
+<rect x="250" y="338" width="561.7" height="13" fill="#4C78A8"/>
+<rect x="250" y="355" width="488.4" height="13" fill="#F58518"/>
+<text x="980" y="349" class="small">0.0023</text>
+<text x="980" y="366" class="small">0.000138</text>
+<text x="20" y="396" class="label">k</text>
+<rect x="250" y="380" width="560.1" height="13" fill="#4C78A8"/>
+<rect x="250" y="397" width="461.5" height="13" fill="#F58518"/>
+<text x="980" y="391" class="small">0.00216</text>
+<text x="980" y="408" class="small">4.92e-05</text>
+<text x="20" y="438" class="label">le</text>
+<rect x="250" y="422" width="550.3" height="13" fill="#4C78A8"/>
+<rect x="250" y="439" width="457.5" height="13" fill="#F58518"/>
+<text x="980" y="433" class="small">0.00148</text>
+<text x="980" y="450" class="small">4.21e-05</text>
+<text x="20" y="480" class="label">by</text>
+<rect x="250" y="464" width="550.3" height="13" fill="#4C78A8"/>
+<rect x="250" y="481" width="459.9" height="13" fill="#F58518"/>
+<text x="980" y="475" class="small">0.00148</text>
+<text x="980" y="492" class="small">4.62e-05</text>
+<text x="20" y="522" class="label">´</text>
+<rect x="250" y="506" width="543.8" height="13" fill="#4C78A8"/>
+<rect x="250" y="523" width="508.8" height="13" fill="#F58518"/>
+<text x="980" y="517" class="small">0.00116</text>
+<text x="980" y="534" class="small">0.000301</text>
+<text x="20" y="564" class="label">â</text>
+<rect x="250" y="548" width="503.9" height="13" fill="#4C78A8"/>
+<rect x="250" y="565" width="503.9" height="13" fill="#F58518"/>
+<text x="980" y="559" class="small">0.00025</text>
+<text x="980" y="576" class="small">0.00025</text>
+<text x="20" y="606" class="label">&#x27;s</text>
+<rect x="250" y="590" width="499.8" height="13" fill="#4C78A8"/>
+<rect x="250" y="607" width="494.1" height="13" fill="#F58518"/>
+<text x="980" y="601" class="small">0.000214</text>
+<text x="980" y="618" class="small">0.000172</text>
+<text x="20" y="648" class="label">�</text>
+<rect x="250" y="632" width="494.9" height="13" fill="#4C78A8"/>
+<rect x="250" y="649" width="498.2" height="13" fill="#F58518"/>
+<text x="980" y="643" class="small">0.000177</text>
+<text x="980" y="660" class="small">0.000201</text>
+</svg>
